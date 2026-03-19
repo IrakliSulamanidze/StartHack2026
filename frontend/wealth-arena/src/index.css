@@ -1,0 +1,56 @@
+@import "tailwindcss";
+
+@theme {
+  --color-arena-bg: #0f1117;
+  --color-arena-surface: #1a1d27;
+  --color-arena-border: #2a2d3a;
+  --color-arena-accent: #22c55e;
+  --color-arena-accent-dim: #16a34a;
+  --color-arena-danger: #ef4444;
+  --color-arena-gold: #eab308;
+  --color-arena-text: #e5e7eb;
+  --color-arena-text-dim: #9ca3af;
+  --color-arena-blue: #3b82f6;
+  --color-arena-purple: #a855f7;
+}
+
+body {
+  margin: 0;
+  background: var(--color-arena-bg);
+  color: var(--color-arena-text);
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+}
+
+#root {
+  min-height: 100vh;
+}
+
+input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 8px;
+  border-radius: 4px;
+  outline: none;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #e5e7eb;
+  cursor: pointer;
+  border: 2px solid #0f1117;
+  box-shadow: 0 0 4px rgba(0, 0, 0, 0.3);
+}
+
+input[type="range"]::-moz-range-thumb {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #e5e7eb;
+  cursor: pointer;
+  border: 2px solid #0f1117;
+  box-shadow: 0 0 4px rgba(0, 0, 0, 0.3);
+}
