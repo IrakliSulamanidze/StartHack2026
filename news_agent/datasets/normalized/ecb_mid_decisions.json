@@ -1,0 +1,107 @@
+{
+  "source_id": "ecb_mid_decisions",
+  "normalized_at": "2026-03-19T07:52:40.308223+00:00",
+  "record_count": 20,
+  "records": [
+    {
+      "date": "2026-03-19",
+      "title": "T2S is operating normally",
+      "link": "https://mid.ecb.europa.eu/rel/166396551c8111f1b9e4459435db0a43.xml"
+    },
+    {
+      "date": "2026-03-19",
+      "title": "TIPS during T2 night-time operations",
+      "link": "https://mid.ecb.europa.eu/rel/1696b4481c8111f1b9e4459435db0a43.xml"
+    },
+    {
+      "date": "2026-03-19",
+      "title": "T2 is operating normally",
+      "link": "https://mid.ecb.europa.eu/rel/16765b061c8111f1b9e4459435db0a43.xml"
+    },
+    {
+      "date": "2026-03-19",
+      "title": "ECMS is operating normally",
+      "link": "https://mid.ecb.europa.eu/rel/1c99661b1c8111f1bb4e93135428cf92.xml"
+    },
+    {
+      "date": "2026-03-19",
+      "title": "ECMS is closed",
+      "link": "https://mid.ecb.europa.eu/rel/1fa34abd1c8111f1bb4e93135428cf92.xml"
+    },
+    {
+      "date": "2026-03-18",
+      "title": "List of eligible marketable assets",
+      "link": "https://mid.ecb.europa.eu/rel/5b67201822eb11f187d7430b07ecb677.xml"
+    },
+    {
+      "date": "2026-03-18",
+      "title": "List of monetary financial institutions (MFIs)",
+      "link": "https://mid.ecb.europa.eu/rel/d6a89caf22e711f1b9a865a949cbe866.xml"
+    },
+    {
+      "date": "2026-03-18",
+      "title": "Euro foreign exchange reference rates",
+      "link": "https://mid.ecb.europa.eu/rel/732deb1922da11f1b9a865a949cbe866.xml"
+    },
+    {
+      "date": "2026-03-18",
+      "title": "Liquidity Management Publication",
+      "link": "https://mid.ecb.europa.eu/rel/bc2ed7da22b411f187d7430b07ecb677.xml"
+    },
+    {
+      "date": "2026-03-18",
+      "title": "Liquidity Management Publication",
+      "link": "https://mid.ecb.europa.eu/rel/bb7b183922b411f187d7430b07ecb677.xml"
+    },
+    {
+      "date": "2026-03-18",
+      "title": "Tender operation allotment - 20260024",
+      "link": "https://mid.ecb.europa.eu/rel/d862552222af11f187d7430b07ecb677.xml"
+    },
+    {
+      "date": "2026-03-18",
+      "title": "Compounded_EURO-SHORT-TERM-RATE_Indicators_MSG",
+      "link": "https://mid.ecb.europa.eu/rel/92f0d91622a211f187d7430b07ecb677.xml"
+    },
+    {
+      "date": "2026-03-18",
+      "title": "Tender operation announcement - 20260024",
+      "link": "https://mid.ecb.europa.eu/rel/91d7eef822a211f187d7430b07ecb677.xml"
+    },
+    {
+      "date": "2026-03-18",
+      "title": "EURO-SHORT-TERM-RATE PUBLICATION MESSAGE",
+      "link": "https://mid.ecb.europa.eu/rel/1945e445229811f1b9a865a949cbe866.xml"
+    },
+    {
+      "date": "2026-03-18",
+      "title": "T2S is operating normally",
+      "link": "https://mid.ecb.europa.eu/rel/134df16a1c8111f1bb4e93135428cf92.xml"
+    },
+    {
+      "date": "2026-03-18",
+      "title": "TIPS during T2 night-time operations",
+      "link": "https://mid.ecb.europa.eu/rel/139756f31c8111f1b9e4459435db0a43.xml"
+    },
+    {
+      "date": "2026-03-18",
+      "title": "ECMS is operating normally",
+      "link": "https://mid.ecb.europa.eu/rel/168ca2271c8111f1b9e4459435db0a43.xml"
+    },
+    {
+      "date": "2026-03-18",
+      "title": "T2 is operating normally",
+      "link": "https://mid.ecb.europa.eu/rel/135ff2cc1c8111f1bb4e93135428cf92.xml"
+    },
+    {
+      "date": "2026-03-18",
+      "title": "ECMS is closed",
+      "link": "https://mid.ecb.europa.eu/rel/198aed961c8111f1bb4e93135428cf92.xml"
+    },
+    {
+      "date": "2026-03-17",
+      "title": "List of eligible marketable assets",
+      "link": "https://mid.ecb.europa.eu/rel/3185ca19222211f1b9a865a949cbe866.xml"
+    }
+  ]
+}

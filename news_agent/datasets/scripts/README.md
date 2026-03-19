@@ -1,35 +1,33 @@
-# Scripts — Future Ingestion & Validation Utilities
+# Scripts — Ingestion & Validation Utilities
 
-This directory will contain scripts that process raw source files into
-curated event records. **No scripts are implemented yet** — this is a
-scaffold for future work.
+This directory is reserved for future standalone utility scripts.
 
-## Planned Scripts
+Parsers have been implemented as a Python package at `news_agent/parsers/`.
+See the section below for how they relate to the original plan.
+
+## Implemented Parsers (in `news_agent/parsers/`)
+
+| Module | Purpose | Status |
+|---|---|---|
+| `normalize_nber.py` | Parse NBER business-cycle XLSX into peak/trough records | ✅ Done |
+| `parse_eia_oil.py` | Extract WTI daily spot prices from EIA XLS | ✅ Done |
+| `parse_fed_xml.py` | Parse Fed monetary-policy RSS/XML into dated records | ✅ Done |
+| `parse_ecb_xml.py` | Parse ECB MID RSS/XML into dated records | ✅ Done |
+| `parse_bls_cpi.py` | Extract CPI-U monthly index from BLS ZIP; compute MoM/YoY | ✅ Done |
+| `extract_nyfed_pdf.py` | Hand-curated GFC milestones (PDF extraction placeholder) | ✅ Placeholder |
+| `normalize_all.py` | Run all parsers and write to `datasets/normalized/` | ✅ Done |
+
+## Planned (not yet implemented)
 
 | Script | Purpose |
 |---|---|
-| `normalize_nber.py` | Parse NBER business-cycle Excel/JSON into structured recession records |
-| `parse_eia_oil.py` | Extract historical oil prices from EIA XLS; detect spike periods |
-| `parse_fed_xml.py` | Parse Fed monetary-policy XML feed into rate-decision records |
-| `parse_ecb_xml.py` | Parse ECB MID XML feed into rate-decision records |
-| `parse_bls_cpi.py` | Extract CPI series from BLS archive; compute MoM/YoY changes |
-| `extract_nyfed_pdf.py` | Extract crisis-timeline milestones from NY Fed PDF (may need manual steps) |
-| `build_events.py` | Combine normalised source data into `historical_events.json` records |
+| `build_events.py` | Combine normalised outputs into richer `historical_events.json` records |
 | `validate_datasets.py` | Schema-check all curated JSON files against expected structure |
 
-## Design Principles
-
-- **Idempotent** — re-running a script produces the same output.
-- **No runtime dependencies** — these are offline build-time tools.
-- **Minimal libraries** — prefer stdlib (`json`, `csv`, `xml.etree`).
-  Only add `openpyxl` or `pandas` if truly needed for Excel parsing.
-- **Output to `curated/`** — scripts read from `raw/` and write to `curated/`.
-
-## Running (future)
+## Running
 
 ```bash
-cd news_agent/datasets/scripts
-python normalize_nber.py          # raw/major/nber_*.xlsx → temp JSON
-python build_events.py            # combine all temp JSON → curated/historical_events.json
-python validate_datasets.py       # check curated/ schema integrity
+cd StartHack2026
+python -m news_agent.parsers.normalize_all     # parse all → datasets/normalized/
+python -m pytest news_agent/tests/ -v          # run all news_agent tests
 ```

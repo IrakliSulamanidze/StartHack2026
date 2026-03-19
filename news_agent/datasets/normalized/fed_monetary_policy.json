@@ -1,0 +1,112 @@
+{
+  "source_id": "fed_monetary_policy",
+  "normalized_at": "2026-03-19T07:52:40.307117+00:00",
+  "record_count": 15,
+  "records": [
+    {
+      "date": "2026-03-18",
+      "title": "Federal Reserve issues FOMC statement",
+      "description": "Federal Reserve issues FOMC statement",
+      "category": "Monetary Policy",
+      "link": "https://www.federalreserve.gov/newsevents/pressreleases/monetary20260318a.htm"
+    },
+    {
+      "date": "2026-03-18",
+      "title": "Federal Reserve Board and Federal Open Market Committee release economic projections from the March 17-18 FOMC meeting",
+      "description": "Federal Reserve Board and Federal Open Market Committee release economic projections from the March 17-18 FOMC meeting",
+      "category": "Monetary Policy",
+      "link": "https://www.federalreserve.gov/newsevents/pressreleases/monetary20260318b.htm"
+    },
+    {
+      "date": "2026-02-24",
+      "title": "Minutes of the Board's discount rate meetings on January 20 and 28, 2026",
+      "description": "Minutes of the Board&#39;s discount rate meetings on January 20 and 28, 2026",
+      "category": "Monetary Policy",
+      "link": "https://www.federalreserve.gov/newsevents/pressreleases/monetary20260224a.htm"
+    },
+    {
+      "date": "2026-02-18",
+      "title": "Minutes of the Federal Open Market Committee, January 27–28, 2026",
+      "description": "Minutes of the Federal Open Market Committee, January 27–28, 2026",
+      "category": "Monetary Policy",
+      "link": "https://www.federalreserve.gov/newsevents/pressreleases/monetary20260218a.htm"
+    },
+    {
+      "date": "2026-01-28",
+      "title": "Federal Reserve issues FOMC statement",
+      "description": "Federal Reserve issues FOMC statement",
+      "category": "Monetary Policy",
+      "link": "https://www.federalreserve.gov/newsevents/pressreleases/monetary20260128a.htm"
+    },
+    {
+      "date": "2026-01-28",
+      "title": "Federal Open Market Committee reaffirms its \"Statement on Longer-Run Goals and Monetary Policy Strategy\"",
+      "description": "Federal Open Market Committee reaffirms its &quot;Statement on Longer-Run Goals and Monetary Policy Strategy&quot;",
+      "category": "Monetary Policy",
+      "link": "https://www.federalreserve.gov/newsevents/pressreleases/monetary20260128b.htm"
+    },
+    {
+      "date": "2026-01-06",
+      "title": "Minutes of the Board's discount rate meeting on December 10, 2025",
+      "description": "Minutes of the Board&#39;s discount rate meeting on December 10, 2025",
+      "category": "Monetary Policy",
+      "link": "https://www.federalreserve.gov/newsevents/pressreleases/monetary20260106a.htm"
+    },
+    {
+      "date": "2025-12-30",
+      "title": "Minutes of the Federal Open Market Committee, December 9–10, 2025",
+      "description": "Minutes of the Federal Open Market Committee, December 9–10, 2025",
+      "category": "Monetary Policy",
+      "link": "https://www.federalreserve.gov/newsevents/pressreleases/monetary20251230a.htm"
+    },
+    {
+      "date": "2025-12-10",
+      "title": "Federal Reserve issues FOMC statement",
+      "description": "Federal Reserve issues FOMC statement",
+      "category": "Monetary Policy",
+      "link": "https://www.federalreserve.gov/newsevents/pressreleases/monetary20251210a.htm"
+    },
+    {
+      "date": "2025-12-10",
+      "title": "Federal Reserve Board and Federal Open Market Committee release economic projections from the December 9-10 FOMC meeting",
+      "description": "Federal Reserve Board and Federal Open Market Committee release economic projections from the December 9-10 FOMC meeting",
+      "category": "Monetary Policy",
+      "link": "https://www.federalreserve.gov/newsevents/pressreleases/monetary20251210b.htm"
+    },
+    {
+      "date": "2025-11-25",
+      "title": "Minutes of the Board's discount rate meetings on October 6, October 20, and October 29, 2025",
+      "description": "Minutes of the Board&#39;s discount rate meetings on October 6, October 20, and October 29, 2025",
+      "category": "Monetary Policy",
+      "link": "https://www.federalreserve.gov/newsevents/pressreleases/monetary20251125a.htm"
+    },
+    {
+      "date": "2025-11-19",
+      "title": "Minutes of the Federal Open Market Committee, October 28-29, 2025",
+      "description": "Minutes of the Federal Open Market Committee, October 28-29, 2025",
+      "category": "Monetary Policy",
+      "link": "https://www.federalreserve.gov/newsevents/pressreleases/monetary20251119a.htm"
+    },
+    {
+      "date": "2025-10-29",
+      "title": "Federal Reserve issues FOMC statement",
+      "description": "Federal Reserve issues FOMC statement",
+      "category": "Monetary Policy",
+      "link": "https://www.federalreserve.gov/newsevents/pressreleases/monetary20251029a.htm"
+    },
+    {
+      "date": "2025-10-14",
+      "title": "Minutes of the Board's discount rate meetings on August 18 and September 17, 2025",
+      "description": "Minutes of the Board&#39;s discount rate meetings on August 18 and September 17, 2025",
+      "category": "Monetary Policy",
+      "link": "https://www.federalreserve.gov/newsevents/pressreleases/monetary20251014a.htm"
+    },
+    {
+      "date": "2025-10-08",
+      "title": "Minutes of the Federal Open Market Committee, September 16–17, 2025",
+      "description": "Minutes of the Federal Open Market Committee, September 16–17, 2025",
+      "category": "Monetary Policy",
+      "link": "https://www.federalreserve.gov/newsevents/pressreleases/monetary20251008a.htm"
+    }
+  ]
+}
