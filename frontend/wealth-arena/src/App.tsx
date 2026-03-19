@@ -4,6 +4,7 @@ import HomePage from './pages/HomePage';
 import TradingPage from './pages/TradingPage';
 import NewsPage from './pages/NewsPage';
 import SettingsPage from './pages/SettingsPage';
+import GamePage from './pages/GamePage';
 
 function AppContent() {
   const { state } = useGame();
@@ -11,6 +12,7 @@ function AppContent() {
   let page: React.ReactNode;
   switch (state.page) {
     case 'home':     page = <HomePage />;    break;
+    case 'game':     page = <GamePage />;    break;
     case 'trading':  page = <TradingPage />; break;
     case 'news':     page = <NewsPage />;    break;
     case 'settings': page = <SettingsPage />; break;

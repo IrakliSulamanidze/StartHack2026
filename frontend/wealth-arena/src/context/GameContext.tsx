@@ -1,11 +1,18 @@
 import { createContext, useContext, useReducer, useCallback, type ReactNode } from 'react';
 import { ASSET_UNIVERSE, computeAssetPrice, type Asset } from '../data/assets';
 import { NEWS_BANK } from '../engine/quarterlyEngine';
+import { createScenario, advanceTurn, getScenario, allocate, ApiError } from '../api/client';
+import type {
+  BackendScenarioState,
+  BackendTurnResult,
+  BackendScenarioCreateRequest,
+  BackendAllocation,
+} from '../types/backend';
 
 // ── Types ──
 
 export type DifficultyMode = 'beginner' | 'intermediate' | 'advanced';
-export type GamePage = 'home' | 'trading' | 'news' | 'settings';
+export type GamePage = 'home' | 'game' | 'trading' | 'news' | 'settings';
 
 export interface Holding {
   ticker: string;
@@ -74,6 +81,13 @@ export interface GameState {
   settings: GameSettings;
   prices: Record<string, number>;
   gameStarted: boolean;
+
+  // ── Backend integration (Phase 1) ──
+  scenarioId: string | null;
+  backendState: BackendScenarioState | null;
+  lastTurnResult: BackendTurnResult | null;
+  backendLoading: boolean;
+  backendError: string | null;
 }
 
 // ── Actions ──
@@ -88,7 +102,13 @@ type Action =
   | { type: 'UPDATE_SETTINGS'; settings: Partial<GameSettings> }
   | { type: 'RESET_GAME' }
   | { type: 'SET_TIME_RANGE'; range: GameSettings['timeRange'] }
-  | { type: 'REFRESH_PRICES' };
+  | { type: 'REFRESH_PRICES' }
+  // ── Backend integration actions ──
+  | { type: 'BACKEND_SET_LOADING'; loading: boolean }
+  | { type: 'BACKEND_SET_ERROR'; error: string | null }
+  | { type: 'BACKEND_SCENARIO_LOADED'; scenario: BackendScenarioState }
+  | { type: 'BACKEND_TURN_RESULT'; result: BackendTurnResult; scenario: BackendScenarioState }
+  | { type: 'BACKEND_STATE_REFRESHED'; scenario: BackendScenarioState };
 
 // ── Helpers ──
 
@@ -139,8 +159,12 @@ function createInitialState(): GameState {
     currentYear: 1,
     settings: DEFAULT_SETTINGS,
     prices,
-    gameStarted: false,
-  };
+    gameStarted: false,    // Backend integration defaults
+    scenarioId: null,
+    backendState: null,
+    lastTurnResult: null,
+    backendLoading: false,
+    backendError: null,  };
   return state;
 }
 
@@ -259,6 +283,72 @@ function gameReducer(state: GameState, action: Action): GameState {
       return { ...state, prices: newPrices };
     }
 
+    // ── Backend integration reducers ──
+
+    case 'BACKEND_SET_LOADING':
+      return { ...state, backendLoading: action.loading, backendError: action.loading ? null : state.backendError };
+
+    case 'BACKEND_SET_ERROR':
+      return { ...state, backendError: action.error, backendLoading: false };
+
+    case 'BACKEND_SCENARIO_LOADED': {
+      const s = action.scenario;
+      // Map backend events into the legacy newsItems so NewsPage can display them
+      const initialNews: NewsItem[] = [];
+      return {
+        ...state,
+        scenarioId: s.scenario_id,
+        backendState: s,
+        lastTurnResult: null,
+        backendLoading: false,
+        backendError: null,
+        currentRound: s.current_turn,
+        gameStarted: true,
+        newsItems: initialNews,
+        portfolioHistory: [{ timestamp: Date.now(), value: 100_000, round: 0 }],
+        page: 'game' as GamePage,
+      };
+    }
+
+    case 'BACKEND_TURN_RESULT': {
+      const r = action.result;
+      const s = action.scenario;
+      // Convert backend events into legacy NewsItem format for NewsPage
+      const turnNews: NewsItem[] = r.events_this_turn.map(e => ({
+        id: e.event_id,
+        title: e.title,
+        details: e.description,
+        source: 'Market Wire',
+        category: e.severity === 'major' ? 'Breaking' : e.severity === 'impactful' ? 'Risk' : 'Analysis',
+        tickers: e.affected_assets,
+        impactDirection: e.impacts.reduce((sum, i) => sum + i.delta_pct, 0) >= 0 ? 'positive' as const : 'negative' as const,
+        round: r.turn_number,
+      }));
+      return {
+        ...state,
+        scenarioId: s.scenario_id,
+        backendState: s,
+        lastTurnResult: r,
+        backendLoading: false,
+        backendError: null,
+        currentRound: r.turn_number,
+        newsItems: [...turnNews, ...state.newsItems],
+        portfolioHistory: [
+          ...state.portfolioHistory,
+          { timestamp: Date.now(), value: r.portfolio_value, round: r.turn_number },
+        ],
+      };
+    }
+
+    case 'BACKEND_STATE_REFRESHED': {
+      return {
+        ...state,
+        backendState: action.scenario,
+        backendLoading: false,
+        backendError: null,
+      };
+    }
+
     default:
       return state;
   }
@@ -273,6 +363,10 @@ interface GameContextValue {
   marketValue: number;
   unrealizedPL: number;
   navigate: (page: GamePage) => void;
+  // ── Backend integration helpers ──
+  startBackendGame: (params: BackendScenarioCreateRequest) => Promise<void>;
+  advanceBackendTurn: (allocations?: BackendAllocation[]) => Promise<void>;
+  setAllocations: (allocations: BackendAllocation[]) => Promise<void>;
 }
 
 const GameCtx = createContext<GameContextValue | null>(null);
@@ -287,8 +381,55 @@ export function GameProvider({ children }: { children: ReactNode }) {
     dispatch({ type: 'SET_PAGE', page });
   }, []);
 
+  // ── Backend integration: async helpers ──
+
+  const startBackendGame = useCallback(async (params: BackendScenarioCreateRequest) => {
+    dispatch({ type: 'BACKEND_SET_LOADING', loading: true });
+    try {
+      const scenario = await createScenario(params);
+      dispatch({ type: 'BACKEND_SCENARIO_LOADED', scenario });
+    } catch (err) {
+      const msg = err instanceof ApiError ? err.message : 'Failed to connect to backend';
+      dispatch({ type: 'BACKEND_SET_ERROR', error: msg });
+    }
+  }, []);
+
+  const advanceBackendTurn = useCallback(async (allocations?: BackendAllocation[]) => {
+    if (!state.scenarioId) return;
+    dispatch({ type: 'BACKEND_SET_LOADING', loading: true });
+    try {
+      const result = await advanceTurn({
+        scenario_id: state.scenarioId,
+        player_id: 'player1',
+        new_allocations: allocations ?? null,
+      });
+      // Re-fetch full scenario state for complete picture
+      const scenario = await getScenario(state.scenarioId);
+      dispatch({ type: 'BACKEND_TURN_RESULT', result, scenario });
+    } catch (err) {
+      const msg = err instanceof ApiError ? err.message : 'Failed to advance turn';
+      dispatch({ type: 'BACKEND_SET_ERROR', error: msg });
+    }
+  }, [state.scenarioId]);
+
+  const setAllocations = useCallback(async (allocations: BackendAllocation[]) => {
+    if (!state.scenarioId) return;
+    dispatch({ type: 'BACKEND_SET_LOADING', loading: true });
+    try {
+      const scenario = await allocate({
+        scenario_id: state.scenarioId,
+        player_id: 'player1',
+        allocations,
+      });
+      dispatch({ type: 'BACKEND_STATE_REFRESHED', scenario });
+    } catch (err) {
+      const msg = err instanceof ApiError ? err.message : 'Failed to set allocations';
+      dispatch({ type: 'BACKEND_SET_ERROR', error: msg });
+    }
+  }, [state.scenarioId]);
+
   return (
-    <GameCtx.Provider value={{ state, dispatch, netWorth: nw, marketValue: mv, unrealizedPL: upl, navigate }}>
+    <GameCtx.Provider value={{ state, dispatch, netWorth: nw, marketValue: mv, unrealizedPL: upl, navigate, startBackendGame, advanceBackendTurn, setAllocations }}>
       {children}
     </GameCtx.Provider>
   );

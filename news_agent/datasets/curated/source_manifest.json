@@ -1,0 +1,98 @@
+[
+  {
+    "source_id": "nber_business_cycles",
+    "title": "NBER US Business Cycle Expansions and Contractions",
+    "news_types_supported": ["major"],
+    "categories_supported": ["recession_onset", "global_crash"],
+    "ingestion_mode": "local_file",
+    "local_path": "raw/major/nber_business_cycles.xlsx",
+    "origin_url": "https://www.nber.org/research/data/us-business-cycle-expansions-and-contractions",
+    "recommended_usage": "Map regime turns to historical recession start/end dates. Use peak/trough dates to anchor Major recession_onset and global_crash events.",
+    "notes": "Download the Excel or JSON version from NBER and place at local_path.",
+    "licensing_note": "Public domain / fair-use research data."
+  },
+  {
+    "source_id": "eia_oil_prices",
+    "title": "EIA Petroleum & Other Liquids — Spot Prices",
+    "news_types_supported": ["impactful", "major"],
+    "categories_supported": ["oil_price_spike", "major_commodity_shock"],
+    "ingestion_mode": "local_file",
+    "local_path": "raw/impactful/eia_oil_prices.xls",
+    "origin_url": "https://www.eia.gov/dnav/pet/pet_pri_spt_s1_d.htm",
+    "recommended_usage": "Identify historical oil price spikes (>20% in a quarter) to ground commodity-shock and oil_price_spike events.",
+    "notes": "Download the XLS workbook and place at local_path.",
+    "licensing_note": "US government public data."
+  },
+  {
+    "source_id": "fed_monetary_policy",
+    "title": "Federal Reserve — Monetary Policy Press Releases (RSS/XML)",
+    "news_types_supported": ["impactful"],
+    "categories_supported": ["hawkish_rate_hike", "dovish_rate_cut", "policy_guidance_shift", "emergency_policy_intervention"],
+    "ingestion_mode": "local_file",
+    "local_path": "raw/impactful/fed_monetary_policy.xml",
+    "origin_url": "https://www.federalreserve.gov/feeds/press_monetary.xml",
+    "recommended_usage": "Extract FOMC decision dates and rate-change direction for rate_hike / rate_cut events.",
+    "notes": "Save the XML feed and place at local_path. The feed contains recent items; for historical depth you may need to supplement from FRED.",
+    "licensing_note": "US government public data."
+  },
+  {
+    "source_id": "ecb_mid_decisions",
+    "title": "ECB Monetary Policy Decisions (RSS/XML)",
+    "news_types_supported": ["impactful"],
+    "categories_supported": ["hawkish_rate_hike", "dovish_rate_cut", "policy_guidance_shift"],
+    "ingestion_mode": "local_file",
+    "local_path": "raw/impactful/ecb_mid_decisions.xml",
+    "origin_url": "https://www.ecb.europa.eu/rss/press_monetarydecisions.xml",
+    "recommended_usage": "European rate decisions. Pair with Fed data for global-policy events.",
+    "notes": "Save the XML feed and place at local_path.",
+    "licensing_note": "ECB public data; check reuse terms."
+  },
+  {
+    "source_id": "bls_cpi_archive",
+    "title": "Bureau of Labor Statistics — CPI Historical Data",
+    "news_types_supported": ["impactful"],
+    "categories_supported": ["inflation_surprise"],
+    "ingestion_mode": "local_file",
+    "local_path": "raw/impactful/bls_cpi_archive.zip",
+    "origin_url": "https://www.bls.gov/cpi/data.htm",
+    "recommended_usage": "Compute month-over-month and year-over-year CPI changes to detect inflation surprises (>0.5% MoM or >5% YoY).",
+    "notes": "Download annual archive ZIP or individual series files and place at local_path.",
+    "licensing_note": "US government public data."
+  },
+  {
+    "source_id": "nyfed_crisis_timeline",
+    "title": "NY Fed — Financial Crisis Timeline (2007–09)",
+    "news_types_supported": ["major"],
+    "categories_supported": ["banking_panic", "global_crash", "emergency_policy_intervention"],
+    "ingestion_mode": "local_file",
+    "local_path": "raw/major/nyfed_crisis_timeline.pdf",
+    "origin_url": "https://www.newyorkfed.org/research/global-economy/policyresponses.html",
+    "recommended_usage": "Reference for Major banking_panic and emergency_policy_intervention events during the GFC. Extract key date milestones.",
+    "notes": "Download the PDF and place at local_path. Will need manual or scripted extraction.",
+    "licensing_note": "US government public data."
+  },
+  {
+    "source_id": "cfr_conflict_tracker",
+    "title": "Council on Foreign Relations — Global Conflict Tracker",
+    "news_types_supported": ["major"],
+    "categories_supported": ["war_escalation"],
+    "ingestion_mode": "external_reference",
+    "local_path": null,
+    "origin_url": "https://www.cfr.org/global-conflict-tracker",
+    "recommended_usage": "Use as a research reference when manually curating war_escalation events. Do NOT scrape or call at runtime.",
+    "notes": "External reference only. Browse for context, then hand-write event records into historical_events.json.",
+    "licensing_note": "Copyrighted. Reference only; do not redistribute content."
+  },
+  {
+    "source_id": "imf_commodity_portal",
+    "title": "IMF — Primary Commodity Prices",
+    "news_types_supported": ["impactful", "major"],
+    "categories_supported": ["major_commodity_shock", "oil_price_spike"],
+    "ingestion_mode": "external_reference",
+    "local_path": null,
+    "origin_url": "https://www.imf.org/en/Research/commodity-prices",
+    "recommended_usage": "Cross-reference commodity price moves when curating events. Do NOT call at runtime.",
+    "notes": "External reference only.",
+    "licensing_note": "IMF terms of use apply. Reference only."
+  }
+]

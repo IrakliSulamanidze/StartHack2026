@@ -1,0 +1,270 @@
+{
+  "major": {
+    "global_crash": [
+      {
+        "template_id": "major_crash_01",
+        "headline": "Markets in Free Fall: {{asset_class}} Plunge {{pct_drop}}% in Worst Session Since {{historical_ref}}",
+        "body": "Global markets experienced severe selling pressure as {{catalyst}}. {{asset_class}} indices dropped {{pct_drop}}% in a single session, echoing the turmoil seen during {{historical_ref}}.",
+        "beginner_explainer": "A market crash means prices fall very fast. This is similar to what happened during {{historical_ref}} — investors panic and sell everything at once."
+      },
+      {
+        "template_id": "major_crash_02",
+        "headline": "Wall Street Rocked: Dow Drops Over {{points}} Points Amid {{catalyst}}",
+        "body": "US equity markets suffered their sharpest decline in {{timeframe}} as {{catalyst}} rattled investor confidence. The Dow Jones fell {{points}} points, dragging global indices lower.",
+        "beginner_explainer": "The Dow Jones is a famous index that tracks 30 big US companies. A big drop like this means investors are very worried about the economy."
+      },
+      {
+        "template_id": "major_crash_03",
+        "headline": "Global Sell-Off: Investors Flee Risk Assets as {{catalyst}} Deepens",
+        "body": "A wave of risk-aversion swept markets worldwide. Equities, corporate bonds, and crypto all fell sharply while gold and government bonds rallied as investors sought safety.",
+        "beginner_explainer": "When people get scared about the economy, they sell risky investments like stocks and crypto and buy safe ones like gold and government bonds."
+      }
+    ],
+    "banking_panic": [
+      {
+        "template_id": "major_bank_01",
+        "headline": "Banking Turmoil: {{bank_name}} Faces Collapse as Depositors Rush for Exits",
+        "body": "Confidence in {{bank_name}} evaporated overnight as reports of {{trigger}} sparked a depositor run. Regulators scrambled to contain contagion fears across the financial system.",
+        "beginner_explainer": "A bank run happens when everyone tries to withdraw their money at the same time. Banks don't keep all deposits on hand, so they can run out of cash very quickly."
+      },
+      {
+        "template_id": "major_bank_02",
+        "headline": "Regulators Step In: Emergency Measures to Prevent Banking Contagion",
+        "body": "Financial authorities announced emergency backstop facilities after {{trigger}}. The measures aim to reassure depositors and prevent panic from spreading to otherwise healthy banks.",
+        "beginner_explainer": "When one bank fails, people worry their bank might be next. Regulators step in with emergency support to stop the fear from spreading — like a firebreak in a forest fire."
+      },
+      {
+        "template_id": "major_bank_03",
+        "headline": "Interbank Lending Freezes as Trust Evaporates in Financial System",
+        "body": "Banks halted lending to each other amid uncertainty about counterparty exposures following {{trigger}}. Short-term funding markets seized up, echoing the credit freeze of {{historical_ref}}.",
+        "beginner_explainer": "Banks normally lend money to each other every day. When they stop — because they don't trust each other — the whole financial system can grind to a halt."
+      }
+    ],
+    "war_escalation": [
+      {
+        "template_id": "major_war_01",
+        "headline": "Geopolitical Crisis: {{conflict}} Sends Oil Past ${{oil_price}} and Stocks Tumbling",
+        "body": "Markets reacted sharply to the escalation of {{conflict}}. Crude oil spiked to ${{oil_price}} per barrel on supply fears while equity markets sold off on rising uncertainty.",
+        "beginner_explainer": "Wars disrupt trade routes and energy supplies. When a conflict involves a major oil-producing region, fuel prices jump and stock markets fall on uncertainty."
+      },
+      {
+        "template_id": "major_war_02",
+        "headline": "Safe Havens Surge: Gold and Treasuries Rally as {{conflict}} Intensifies",
+        "body": "Investors poured into safe-haven assets as {{conflict}} intensified. Gold rose {{gold_chg}}% and Treasury yields fell sharply as capital rotated out of equities.",
+        "beginner_explainer": "During wars, investors move money into 'safe' assets — gold and government bonds — because they're less likely to lose value during a crisis."
+      },
+      {
+        "template_id": "major_war_03",
+        "headline": "Defence Stocks Rally While Broader Market Slides on {{conflict}} Fears",
+        "body": "The defence sector outperformed as {{conflict}} raised expectations of increased military spending. The broader market, however, fell on concerns about supply-chain disruption and energy costs.",
+        "beginner_explainer": "Companies that make military equipment often see their stock prices rise during conflicts, while most other companies suffer from higher costs and uncertainty."
+      }
+    ],
+    "recession_onset": [
+      {
+        "template_id": "major_recess_01",
+        "headline": "It's Official: Economy Enters Recession After {{quarters}} Quarters of Contraction",
+        "body": "Economic data confirmed what markets had feared — the economy has officially entered a recession. GDP contracted for {{quarters}} consecutive quarters as consumer spending and business investment weakened.",
+        "beginner_explainer": "A recession means the economy is shrinking. Companies make less money, some people lose their jobs, and everyone becomes more careful with spending."
+      },
+      {
+        "template_id": "major_recess_02",
+        "headline": "Recession Fears Confirmed: Unemployment Rises as Growth Stalls",
+        "body": "The latest employment report showed unemployment rising to {{unemployment_rate}}%, reinforcing recession concerns. Defensive sectors outperformed while cyclicals lagged sharply.",
+        "beginner_explainer": "When more people lose their jobs, they spend less money, which means companies earn less — it's a negative cycle that defines recessions."
+      },
+      {
+        "template_id": "major_recess_03",
+        "headline": "Markets Brace: Recession Signals Flash Red Across the Dashboard",
+        "body": "The yield curve inversion, falling leading indicators, and weakening PMI data all point to a recession underway. Equity markets priced in further earnings downgrades.",
+        "beginner_explainer": "Economists use many signals to predict recessions. When most of them turn negative at once, it's a strong warning that the economy is in trouble."
+      }
+    ],
+    "emergency_policy_intervention": [
+      {
+        "template_id": "major_emerg_01",
+        "headline": "Emergency Move: Central Bank Cuts Rates by {{bps}}bps in Unscheduled Decision",
+        "body": "In a rare unscheduled meeting, the central bank slashed interest rates by {{bps}} basis points to combat {{trigger}}. Markets initially rallied but volatility remained elevated.",
+        "beginner_explainer": "Central banks normally change interest rates at scheduled meetings. An emergency cut outside that schedule means they think the situation is very serious."
+      },
+      {
+        "template_id": "major_emerg_02",
+        "headline": "Government Announces ${{bailout_size}} Bailout Package for {{sector}}",
+        "body": "Authorities unveiled a {{bailout_size}} billion dollar rescue package for the {{sector}} sector after {{trigger}} threatened systemic stability. The intervention aims to restore confidence.",
+        "beginner_explainer": "A bailout is when the government uses taxpayer money to save companies or banks that are about to fail, to prevent a bigger economic disaster."
+      },
+      {
+        "template_id": "major_emerg_03",
+        "headline": "Unprecedented: Central Bank Launches Emergency Asset Purchase Programme",
+        "body": "The central bank announced it would begin purchasing {{asset_type}} to stabilise markets following {{trigger}}. The open-ended programme marks a historic expansion of monetary policy tools.",
+        "beginner_explainer": "Sometimes cutting interest rates isn't enough. The central bank starts buying bonds and other assets directly to pump money into the economy — this is called quantitative easing."
+      }
+    ],
+    "major_commodity_shock": [
+      {
+        "template_id": "major_commod_01",
+        "headline": "Oil Shock: Crude Surges {{pct_change}}% as {{catalyst}} Disrupts Supply",
+        "body": "Crude oil prices spiked {{pct_change}}% after {{catalyst}} disrupted a significant portion of global supply. Energy-importing nations face rising costs and inflation pressure.",
+        "beginner_explainer": "Oil is used in almost everything — fuel, plastics, shipping. When its price jumps suddenly, costs go up for everyone and the economy slows down."
+      },
+      {
+        "template_id": "major_commod_02",
+        "headline": "Energy Crisis: Governments Tap Strategic Reserves as Prices Soar",
+        "body": "Multiple governments announced releases from strategic petroleum reserves as {{catalyst}} pushed energy prices to multi-year highs. The coordinated response aims to cool markets.",
+        "beginner_explainer": "Countries keep emergency oil reserves for crises. When they start using them, it means the situation is serious — like breaking the glass on a fire extinguisher."
+      },
+      {
+        "template_id": "major_commod_03",
+        "headline": "Commodity Rout: {{commodity}} Prices Collapse {{pct_change}}% on {{catalyst}}",
+        "body": "{{commodity}} prices plunged {{pct_change}}% as {{catalyst}} upended market expectations. Producers face severe margin pressure while consumers benefit from falling input costs.",
+        "beginner_explainer": "Commodity prices can fall just as sharply as they rise. A sudden drop helps buyers (like factories) but hurts producers (like mining companies)."
+      }
+    ]
+  },
+  "impactful": {
+    "hawkish_rate_hike": [
+      {
+        "template_id": "impact_hike_01",
+        "headline": "Fed Hikes Rates {{bps}}bps — Signals More to Come",
+        "body": "The Federal Reserve raised interest rates by {{bps}} basis points and signalled further tightening ahead. Chair noted that inflation remains 'unacceptably high'.",
+        "beginner_explainer": "Raising interest rates is the main tool central banks use to fight inflation. Higher rates make borrowing more expensive, which slows spending and price increases."
+      },
+      {
+        "template_id": "impact_hike_02",
+        "headline": "Rate Hike Hits Markets: Stocks Fall, Bond Yields Rise",
+        "body": "Equity markets declined and bond yields jumped after the latest rate hike. Growth stocks were hit hardest as higher rates reduce the present value of future earnings.",
+        "beginner_explainer": "When rates go up, stocks tend to fall — especially fast-growing tech companies — because higher rates make future profits worth less in today's dollars."
+      }
+    ],
+    "dovish_rate_cut": [
+      {
+        "template_id": "impact_cut_01",
+        "headline": "Central Bank Cuts Rates by {{bps}}bps as Growth Slows",
+        "body": "The central bank lowered its benchmark rate by {{bps}} basis points, citing weakening economic data. Markets rallied on expectations of easier financial conditions.",
+        "beginner_explainer": "Cutting rates makes borrowing cheaper, which helps businesses invest and people buy homes. Markets usually go up because it's a sign the central bank is supporting the economy."
+      },
+      {
+        "template_id": "impact_cut_02",
+        "headline": "Relief Rally: Stocks Surge After Rate Cut Signals Economic Support",
+        "body": "Equity markets jumped broadly after the rate cut. Real estate and utility sectors led gains as lower rates reduce financing costs and boost dividend appeal.",
+        "beginner_explainer": "Lower interest rates are usually good for stocks. Companies can borrow more cheaply, and savings accounts pay less — so more money flows into the stock market."
+      }
+    ],
+    "inflation_surprise": [
+      {
+        "template_id": "impact_infl_01",
+        "headline": "Inflation Shock: CPI Comes in at {{cpi_pct}}% — Above All Forecasts",
+        "body": "Consumer prices rose {{cpi_pct}}% year-over-year, significantly above the consensus forecast of {{forecast_pct}}%. Markets sold off as investors braced for a more aggressive central bank response.",
+        "beginner_explainer": "CPI measures how fast prices are rising. When it's higher than expected, it usually means the central bank will raise rates more aggressively, which is bad for stocks and bonds."
+      },
+      {
+        "template_id": "impact_infl_02",
+        "headline": "Inflation Cools: CPI Drops to {{cpi_pct}}% — Best Print in {{months}} Months",
+        "body": "Inflation eased more than expected, with CPI falling to {{cpi_pct}}% year-over-year. Markets rallied on hopes that the rate-hiking cycle may be nearing its end.",
+        "beginner_explainer": "When inflation drops, it's good news for investors. It means the central bank might stop raising rates soon, which helps stock and bond prices recover."
+      }
+    ],
+    "policy_guidance_shift": [
+      {
+        "template_id": "impact_guide_01",
+        "headline": "Fed Shifts Tone: 'Data-Dependent' Replaces Forward Guidance",
+        "body": "The central bank dropped its explicit forward guidance, stating future decisions will be 'data-dependent'. Markets interpreted the shift as a potential pause in the tightening cycle.",
+        "beginner_explainer": "Central banks sometimes tell you what they plan to do next. When they stop giving clear guidance, it means they're unsure — and markets have to guess, which creates volatility."
+      },
+      {
+        "template_id": "impact_guide_02",
+        "headline": "Hawkish Pivot: Central Bank Warns Rates May Stay 'Higher for Longer'",
+        "body": "Policymakers surprised markets by signalling rates will remain elevated longer than previously expected. Bond yields rose and rate-sensitive sectors underperformed.",
+        "beginner_explainer": "If the central bank says rates will stay high for a long time, it means borrowing stays expensive. That's tough for companies with lots of debt and for people wanting mortgages."
+      }
+    ],
+    "oil_price_spike": [
+      {
+        "template_id": "impact_oil_01",
+        "headline": "Oil Jumps {{pct_change}}% on {{catalyst}} — Energy Stocks Rally",
+        "body": "Crude prices surged {{pct_change}}% after {{catalyst}}. Energy producers rallied while airlines, shipping, and consumer discretionary stocks fell on higher input costs.",
+        "beginner_explainer": "When oil prices jump, companies that produce oil make more money, but companies that use a lot of fuel — like airlines — make less because their costs go up."
+      },
+      {
+        "template_id": "impact_oil_02",
+        "headline": "OPEC+ Surprises With Production Cut — Crude Rallies",
+        "body": "OPEC+ announced an unexpected production cut of {{cut_mbpd}} million barrels per day. Crude prices jumped as the supply reduction tightens global markets.",
+        "beginner_explainer": "OPEC is a group of oil-producing countries. When they cut production, there's less oil available, so the price goes up — like when a popular toy is in short supply."
+      }
+    ],
+    "bond_yield_jump": [
+      {
+        "template_id": "impact_yield_01",
+        "headline": "Yields Spike: {{benchmark}} Hits {{yield_pct}}% — Highest in {{years}} Years",
+        "body": "The {{benchmark}} yield rose sharply to {{yield_pct}}%, the highest level in {{years}} years. The move tightened financial conditions and pressured equity valuations.",
+        "beginner_explainer": "Bond yields are basically the interest rate the government pays to borrow money. When they go up fast, it makes all other borrowing more expensive too."
+      },
+      {
+        "template_id": "impact_yield_02",
+        "headline": "Bond Sell-Off Deepens: Investors Demand Higher Returns",
+        "body": "Government bond prices fell further as investors demanded higher yields to compensate for inflation risk and rising government debt levels.",
+        "beginner_explainer": "When bond prices fall, yields rise — they move in opposite directions. Rising yields mean investors are worried about inflation or government spending."
+      }
+    ],
+    "safe_haven_rotation": [
+      {
+        "template_id": "impact_haven_01",
+        "headline": "Flight to Safety: Gold Rises {{gold_chg}}% as Uncertainty Mounts",
+        "body": "Gold rallied {{gold_chg}}% as investors rotated out of risk assets amid {{catalyst}}. The move reflects elevated demand for portfolio hedges in uncertain times.",
+        "beginner_explainer": "Gold is seen as a safe place to put your money when things are uncertain. It's been valuable for thousands of years, so people trust it during crises."
+      },
+      {
+        "template_id": "impact_haven_02",
+        "headline": "Treasuries Rally as Investors Seek Shelter From Market Volatility",
+        "body": "US Treasury prices surged, pushing yields lower, as investors fled risk assets. The classic flight-to-quality trade reflects deep uncertainty about the economic outlook.",
+        "beginner_explainer": "Government bonds from stable countries like the US are considered very safe. When investors are scared, they buy these bonds, pushing their prices up."
+      }
+    ]
+  },
+  "ordinary": {
+    "daily_macro_watch": [
+      {
+        "template_id": "ordinary_macro_01",
+        "headline": "Markets Steady as {{data_release}} Comes in Near Expectations",
+        "body": "{{data_release}} data was broadly in line with forecasts, providing little reason for significant market moves. Indices traded in a narrow range.",
+        "beginner_explainer": "When economic data matches what people expected, markets tend to be calm. No surprises means no reason to buy or sell aggressively."
+      },
+      {
+        "template_id": "ordinary_macro_02",
+        "headline": "Mixed Signals: Jobs Strong but Manufacturing Slows",
+        "body": "The latest jobs report showed solid hiring, but manufacturing PMI data pointed to a slowdown. Markets digested the conflicting signals with modest moves.",
+        "beginner_explainer": "Sometimes different parts of the economy send different signals. That's normal — the economy is complex and not everything moves in the same direction."
+      }
+    ],
+    "sector_rotation": [
+      {
+        "template_id": "ordinary_sector_01",
+        "headline": "Tech Leads as Investors Rotate From Defensives",
+        "body": "Technology stocks outperformed as improving risk appetite drove capital away from defensive sectors like utilities and consumer staples.",
+        "beginner_explainer": "Investors move money between different types of stocks depending on their confidence. When they feel optimistic, they buy riskier tech stocks."
+      }
+    ],
+    "earnings_tone": [
+      {
+        "template_id": "ordinary_earn_01",
+        "headline": "Earnings Season: Solid Results but Cautious Guidance",
+        "body": "Companies mostly beat earnings expectations, but forward guidance was cautious. Executives cited {{concern}} as a headwind for coming quarters.",
+        "beginner_explainer": "Earnings season is when companies report how much money they made. Even good results can worry investors if companies say the future looks tough."
+      }
+    ],
+    "market_chatter": [
+      {
+        "template_id": "ordinary_chat_01",
+        "headline": "Quiet Day on Wall Street — Volumes Below Average",
+        "body": "Markets drifted sideways on below-average trading volume. With no major catalysts on the calendar, participants await next week's {{upcoming_event}}.",
+        "beginner_explainer": "Not every day has big news. Sometimes markets are quiet and prices barely move. Traders often wait for important events before making big bets."
+      },
+      {
+        "template_id": "ordinary_chat_02",
+        "headline": "Analysts Debate: Is the Rally Sustainable?",
+        "body": "Wall Street strategists offered mixed views on the market's recent gains. Bulls point to strong earnings; bears warn of stretched valuations.",
+        "beginner_explainer": "Analysts are people who study the market for a living. They often disagree — that's what makes markets work. Some think prices will keep rising (bulls) and others think they'll fall (bears)."
+      }
+    ]
+  }
+}

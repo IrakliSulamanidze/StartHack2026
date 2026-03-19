@@ -2,7 +2,8 @@ import { useGame, type GamePage } from '../context/GameContext';
 
 const NAV_ITEMS: { id: GamePage; label: string; icon: string }[] = [
   { id: 'home', label: 'Home', icon: 'M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-4 0h4' },
-  { id: 'trading', label: 'Trading', icon: 'M13 7h8m0 0v8m0-8l-8 8-4-4-6 6' },
+  { id: 'game', label: 'Game', icon: 'M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z M21 12a9 9 0 11-18 0 9 9 0 0118 0z' },
+  { id: 'trading', label: 'Invest', icon: 'M13 7h8m0 0v8m0-8l-8 8-4-4-6 6' },
   { id: 'news', label: 'News', icon: 'M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2' },
   { id: 'settings', label: 'Settings', icon: 'M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.066-2.573c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z M15 12a3 3 0 11-6 0 3 3 0 016 0z' },
 ];
@@ -18,12 +19,22 @@ export default function Sidebar() {
         <span className="text-white font-bold text-sm hidden lg:block">Wealth<span className="text-arena-accent">Arena</span></span>
       </div>
 
-      {/* Net Worth mini */}
+      {/* Portfolio mini */}
       <div className="px-3 py-3 border-b border-arena-border hidden lg:block">
-        <p className="text-[10px] uppercase text-arena-text-dim tracking-wider">Net Worth</p>
-        <p className={`text-lg font-bold font-mono ${netWorth >= state.startingCash ? 'text-arena-accent' : 'text-red-400'}`}>
-          ${netWorth.toLocaleString(undefined, { maximumFractionDigits: 0 })}
+        <p className="text-[10px] uppercase text-arena-text-dim tracking-wider">
+          {state.scenarioId ? 'Portfolio' : 'Net Worth'}
         </p>
+        {(() => {
+          const val = state.scenarioId
+            ? (state.lastTurnResult?.portfolio_value ?? 100_000)
+            : netWorth;
+          const base = state.scenarioId ? 100_000 : state.startingCash;
+          return (
+            <p className={`text-lg font-bold font-mono ${val >= base ? 'text-arena-accent' : 'text-red-400'}`}>
+              ${val.toLocaleString(undefined, { maximumFractionDigits: 0 })}
+            </p>
+          );
+        })()}
       </div>
 
       {/* Nav */}

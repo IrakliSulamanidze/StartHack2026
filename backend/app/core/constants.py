@@ -49,6 +49,7 @@ class GameMode(str, Enum):
 
 class TimeMode(str, Enum):
     MONTHLY = "monthly"
+    QUARTERLY = "quarterly"
     YEARLY = "yearly"
 
 

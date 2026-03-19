@@ -26,10 +26,13 @@ from app.models.scenario import ScenarioConfig, ScenarioState
 # Default turn counts per (difficulty, time_mode) combination.
 _DEFAULT_TURNS: Dict[Tuple[str, str], int] = {
     (Difficulty.BEGINNER, TimeMode.MONTHLY):      24,
+    (Difficulty.BEGINNER, TimeMode.QUARTERLY):    8,
     (Difficulty.BEGINNER, TimeMode.YEARLY):       10,
     (Difficulty.INTERMEDIATE, TimeMode.MONTHLY):  36,
+    (Difficulty.INTERMEDIATE, TimeMode.QUARTERLY): 12,
     (Difficulty.INTERMEDIATE, TimeMode.YEARLY):   15,
     (Difficulty.ADVANCED, TimeMode.MONTHLY):      60,
+    (Difficulty.ADVANCED, TimeMode.QUARTERLY):    20,
     (Difficulty.ADVANCED, TimeMode.YEARLY):       20,
 }
 

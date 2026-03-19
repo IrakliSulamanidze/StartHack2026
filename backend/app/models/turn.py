@@ -7,6 +7,14 @@ from app.models.event import GameEvent
 from app.models.portfolio import Allocation
 
 
+class AllocateInput(BaseModel):
+    """Set portfolio allocations without advancing the turn."""
+
+    scenario_id: str
+    player_id: str
+    allocations: List[Allocation]
+
+
 class TurnInput(BaseModel):
     """What the player submits at the start of each turn."""
 
@@ -30,6 +38,7 @@ class TurnResult(BaseModel):
     # Portfolio performance this turn
     portfolio_value: float
     portfolio_return_this_turn_pct: float
+    portfolio_cash: float = 0.0
 
     # Events that fired this turn (revealed to the player)
     events_this_turn: List[GameEvent]

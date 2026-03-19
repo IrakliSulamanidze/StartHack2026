@@ -1,0 +1,240 @@
+[
+  {
+    "event_id": "major_001",
+    "news_type": "major",
+    "category": "global_crash",
+    "title": "Global Financial Crisis — Equity Markets Collapse",
+    "historical_basis_source_ids": ["nber_business_cycles", "nyfed_crisis_timeline"],
+    "date_label": "2008-Q4",
+    "region": "global",
+    "severity": 5,
+    "short_summary": "Following the collapse of Lehman Brothers, global equity indices fell 30-50% in a matter of weeks. Credit markets froze and interbank lending seized up.",
+    "affected_asset_classes": ["equities", "bonds", "fx"],
+    "directional_impact": {
+      "equities": "strongly_negative",
+      "bonds": "mixed",
+      "gold": "positive",
+      "fx": "usd_strengthens"
+    },
+    "beginner_explanation": "Banks lent too much money to people who couldn't pay it back. When the biggest banks started failing, everyone panicked and sold their stocks. Prices crashed worldwide.",
+    "retrieval_tags": ["gfc", "lehman", "2008", "crash", "banking_crisis", "credit_freeze"],
+    "status": "ready_for_curation"
+  },
+  {
+    "event_id": "major_002",
+    "news_type": "major",
+    "category": "banking_panic",
+    "title": "Lehman Brothers Files for Bankruptcy",
+    "historical_basis_source_ids": ["nyfed_crisis_timeline"],
+    "date_label": "2008-09",
+    "region": "us",
+    "severity": 5,
+    "short_summary": "Lehman Brothers, the fourth-largest US investment bank, filed for Chapter 11 bankruptcy — the largest bankruptcy filing in US history at the time.",
+    "affected_asset_classes": ["equities", "bonds"],
+    "directional_impact": {
+      "equities": "strongly_negative",
+      "bonds": "flight_to_safety",
+      "gold": "positive"
+    },
+    "beginner_explanation": "Imagine one of the biggest banks in the world suddenly saying 'we have no money left'. That scared everyone — other banks stopped lending to each other and stock markets plunged.",
+    "retrieval_tags": ["lehman", "bankruptcy", "2008", "banking_panic", "too_big_to_fail"],
+    "status": "ready_for_curation"
+  },
+  {
+    "event_id": "major_003",
+    "news_type": "major",
+    "category": "recession_onset",
+    "title": "NBER Declares US Recession Beginning December 2007",
+    "historical_basis_source_ids": ["nber_business_cycles"],
+    "date_label": "2008-12",
+    "region": "us",
+    "severity": 4,
+    "short_summary": "The NBER Business Cycle Dating Committee officially declared that a recession began in December 2007, roughly a year after initial economic weakening.",
+    "affected_asset_classes": ["equities", "bonds"],
+    "directional_impact": {
+      "equities": "negative",
+      "bonds": "positive"
+    },
+    "beginner_explanation": "A recession means the economy is shrinking — companies earn less, people lose jobs, and stocks usually fall. Bonds often rise because investors look for safety.",
+    "retrieval_tags": ["nber", "recession", "2007", "great_recession", "contraction"],
+    "status": "ready_for_curation"
+  },
+  {
+    "event_id": "major_004",
+    "news_type": "major",
+    "category": "emergency_policy_intervention",
+    "title": "Fed Launches Quantitative Easing (QE1)",
+    "historical_basis_source_ids": ["fed_monetary_policy", "nyfed_crisis_timeline"],
+    "date_label": "2008-11",
+    "region": "us",
+    "severity": 5,
+    "short_summary": "The Federal Reserve announced the purchase of up to $600 billion in mortgage-backed securities — the first round of quantitative easing in US history.",
+    "affected_asset_classes": ["equities", "bonds", "fx"],
+    "directional_impact": {
+      "equities": "positive",
+      "bonds": "positive",
+      "gold": "positive",
+      "fx": "usd_weakens"
+    },
+    "beginner_explanation": "When normal interest rate cuts weren't enough, the Fed started 'printing money' to buy bonds and push more cash into the economy. This helped calm markets but weakened the dollar.",
+    "retrieval_tags": ["qe", "quantitative_easing", "fed", "2008", "emergency", "mbs"],
+    "status": "ready_for_curation"
+  },
+  {
+    "event_id": "major_005",
+    "news_type": "major",
+    "category": "war_escalation",
+    "title": "Russia Invades Ukraine — Energy Markets Spike",
+    "historical_basis_source_ids": ["eia_oil_prices", "cfr_conflict_tracker"],
+    "date_label": "2022-02",
+    "region": "global",
+    "severity": 5,
+    "short_summary": "Russia's full-scale invasion of Ukraine in February 2022 triggered sharp spikes in oil, gas, and wheat prices. European energy security was fundamentally disrupted.",
+    "affected_asset_classes": ["equities", "gold", "fx", "crypto"],
+    "directional_impact": {
+      "equities": "negative",
+      "gold": "positive",
+      "fx": "eur_weakens"
+    },
+    "beginner_explanation": "Russia is one of the world's biggest oil and gas exporters. When they invaded Ukraine, countries stopped buying Russian energy, so prices shot up and stocks fell on fear of a wider conflict.",
+    "retrieval_tags": ["ukraine", "russia", "war", "2022", "energy_crisis", "oil_spike"],
+    "status": "ready_for_curation"
+  },
+  {
+    "event_id": "major_006",
+    "news_type": "major",
+    "category": "major_commodity_shock",
+    "title": "1973 OPEC Oil Embargo",
+    "historical_basis_source_ids": ["eia_oil_prices", "imf_commodity_portal"],
+    "date_label": "1973-Q4",
+    "region": "global",
+    "severity": 5,
+    "short_summary": "OPEC imposed an oil embargo on nations supporting Israel during the Yom Kippur War, quadrupling oil prices and triggering a global recession.",
+    "affected_asset_classes": ["equities", "bonds", "gold"],
+    "directional_impact": {
+      "equities": "strongly_negative",
+      "gold": "strongly_positive"
+    },
+    "beginner_explanation": "Oil-producing countries refused to sell oil to the US and others. Gas prices skyrocketed, the economy slowed down, and stocks crashed. Gold soared as people looked for safety.",
+    "retrieval_tags": ["opec", "embargo", "1973", "oil_shock", "stagflation"],
+    "status": "placeholder"
+  },
+  {
+    "event_id": "impactful_001",
+    "news_type": "impactful",
+    "category": "hawkish_rate_hike",
+    "title": "Fed Raises Rates 75 bps — Aggressive Tightening Cycle",
+    "historical_basis_source_ids": ["fed_monetary_policy"],
+    "date_label": "2022-06",
+    "region": "us",
+    "severity": 3,
+    "short_summary": "The Federal Reserve raised the federal funds rate by 75 basis points — the largest single hike since 1994 — as inflation surged above 8%.",
+    "affected_asset_classes": ["equities", "bonds", "crypto"],
+    "directional_impact": {
+      "equities": "negative",
+      "bonds": "negative",
+      "crypto": "negative"
+    },
+    "beginner_explanation": "The Fed made borrowing money more expensive to slow down rising prices. Higher rates are bad for stocks because companies pay more to borrow, and bonds lose value when rates rise.",
+    "retrieval_tags": ["rate_hike", "75bps", "fed", "2022", "tightening", "inflation"],
+    "status": "ready_for_curation"
+  },
+  {
+    "event_id": "impactful_002",
+    "news_type": "impactful",
+    "category": "inflation_surprise",
+    "title": "US CPI Hits 9.1% — Highest Since 1981",
+    "historical_basis_source_ids": ["bls_cpi_archive"],
+    "date_label": "2022-06",
+    "region": "us",
+    "severity": 4,
+    "short_summary": "The June 2022 CPI report showed year-over-year inflation of 9.1%, the highest reading in over 40 years, driven by energy and food costs.",
+    "affected_asset_classes": ["equities", "bonds", "gold"],
+    "directional_impact": {
+      "equities": "negative",
+      "bonds": "negative",
+      "gold": "mixed"
+    },
+    "beginner_explanation": "Prices were rising at the fastest pace in 40 years. That means your money buys less — groceries, gas, rent all cost more. Markets dropped because investors expected even bigger rate hikes.",
+    "retrieval_tags": ["cpi", "inflation", "9.1", "2022", "cost_of_living", "bls"],
+    "status": "ready_for_curation"
+  },
+  {
+    "event_id": "impactful_003",
+    "news_type": "impactful",
+    "category": "oil_price_spike",
+    "title": "Brent Crude Tops $130/bbl After Ukraine Invasion",
+    "historical_basis_source_ids": ["eia_oil_prices"],
+    "date_label": "2022-03",
+    "region": "global",
+    "severity": 3,
+    "short_summary": "Brent crude oil surged past $130 per barrel in early March 2022 as markets priced in potential sanctions on Russian energy exports.",
+    "affected_asset_classes": ["equities", "gold"],
+    "directional_impact": {
+      "equities": "negative",
+      "gold": "positive"
+    },
+    "beginner_explanation": "Oil prices jumped because the world was worried about losing Russian oil supplies. Higher oil means higher costs for everything — shipping, manufacturing, driving — which hurts company profits.",
+    "retrieval_tags": ["oil", "brent", "130", "2022", "ukraine", "supply_shock"],
+    "status": "ready_for_curation"
+  },
+  {
+    "event_id": "impactful_004",
+    "news_type": "impactful",
+    "category": "dovish_rate_cut",
+    "title": "Fed Emergency Rate Cut to Near Zero — COVID Response",
+    "historical_basis_source_ids": ["fed_monetary_policy"],
+    "date_label": "2020-03",
+    "region": "us",
+    "severity": 4,
+    "short_summary": "The Federal Reserve cut rates to 0–0.25% in an emergency Sunday meeting as COVID-19 lockdowns threatened a global economic shutdown.",
+    "affected_asset_classes": ["equities", "bonds", "gold"],
+    "directional_impact": {
+      "equities": "initially_negative_then_positive",
+      "bonds": "positive",
+      "gold": "positive"
+    },
+    "beginner_explanation": "The Fed slashed rates to almost zero to help the economy survive COVID lockdowns. Cheaper borrowing helps companies and homeowners, but it also showed how scared policymakers were.",
+    "retrieval_tags": ["covid", "emergency_cut", "zero_rates", "2020", "fed", "pandemic"],
+    "status": "ready_for_curation"
+  },
+  {
+    "event_id": "impactful_005",
+    "news_type": "impactful",
+    "category": "safe_haven_rotation",
+    "title": "Gold Breaks $2,000/oz Amid Banking Stress",
+    "historical_basis_source_ids": ["imf_commodity_portal"],
+    "date_label": "2023-03",
+    "region": "global",
+    "severity": 3,
+    "short_summary": "Gold surged past $2,000 per ounce as the collapse of Silicon Valley Bank and Credit Suisse turmoil drove investors toward safe-haven assets.",
+    "affected_asset_classes": ["gold", "equities", "bonds"],
+    "directional_impact": {
+      "gold": "strongly_positive",
+      "equities": "negative",
+      "bonds": "positive"
+    },
+    "beginner_explanation": "When banks start failing, people get nervous and move their money into gold — it's been a store of value for thousands of years. That's called a 'flight to safety'.",
+    "retrieval_tags": ["gold", "2000", "svb", "credit_suisse", "safe_haven", "2023"],
+    "status": "placeholder"
+  },
+  {
+    "event_id": "impactful_006",
+    "news_type": "impactful",
+    "category": "bond_yield_jump",
+    "title": "US 10-Year Yield Hits 5% — Highest Since 2007",
+    "historical_basis_source_ids": ["fed_monetary_policy"],
+    "date_label": "2023-10",
+    "region": "us",
+    "severity": 3,
+    "short_summary": "The benchmark US 10-year Treasury yield briefly touched 5% for the first time since 2007, reflecting persistent inflation concerns and heavy government borrowing.",
+    "affected_asset_classes": ["bonds", "equities"],
+    "directional_impact": {
+      "bonds": "negative",
+      "equities": "negative"
+    },
+    "beginner_explanation": "When government bond yields rise, it means investors are demanding more return to lend money. That makes borrowing more expensive for everyone — governments, companies, and homebuyers.",
+    "retrieval_tags": ["10y_yield", "5_percent", "2023", "treasury", "tightening"],
+    "status": "placeholder"
+  }
+]

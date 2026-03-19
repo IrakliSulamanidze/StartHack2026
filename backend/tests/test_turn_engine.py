@@ -161,8 +161,8 @@ def test_advance_after_complete_returns_400():
 def test_advance_returns_initial_capital_on_first_turn():
     scenario = _create_scenario()
     result = _advance(scenario["scenario_id"]).json()
-    # After one turn the portfolio value should be close to 10_000 but not exact
-    assert 5_000 < result["portfolio_value"] < 20_000
+    # After one turn the portfolio value should be close to 100_000 but not exact
+    assert 50_000 < result["portfolio_value"] < 200_000
 
 
 def test_advance_equal_weight_default_portfolio():
@@ -283,3 +283,116 @@ def test_selected_assets_annualized_vol_is_positive():
     for asset_class, selected in scenario["selected_assets"].items():
         assert selected["annualized_vol_pct"] > 0, \
             f"annualized_vol_pct must be > 0 for {asset_class}"
+
+
+# ---------------------------------------------------------------------------
+# Cash-first portfolio tests
+# ---------------------------------------------------------------------------
+
+def test_portfolio_starts_100_pct_cash():
+    """First advance with no allocations → 100% cash, zero investment."""
+    scenario = _create_scenario()
+    result = _advance(scenario["scenario_id"]).json()
+    # Portfolio should stay exactly at initial capital (cash earns 0%).
+    assert result["portfolio_value"] == 100_000.0
+    assert result["portfolio_cash"] == 100_000.0
+    assert result["portfolio_return_this_turn_pct"] == 0.0
+
+
+def test_partial_allocation_keeps_cash():
+    """Allocating 50% equities leaves 50% as cash."""
+    scenario = _create_scenario(asset_classes=["equities", "bonds"])
+    sid = scenario["scenario_id"]
+    allocs = [{"asset_class": "equities", "weight": 0.5}]
+    result = _advance(sid, new_allocations=allocs).json()
+    # Cash ~= 50% of portfolio value.
+    assert result["portfolio_cash"] > 40_000
+    assert result["portfolio_cash"] < 60_000
+
+
+def test_allocation_sum_over_1_returns_400():
+    """Weights summing to more than 1.0 must be rejected."""
+    scenario = _create_scenario(asset_classes=["equities", "bonds"])
+    sid = scenario["scenario_id"]
+    bad = [
+        {"asset_class": "equities", "weight": 0.7},
+        {"asset_class": "bonds", "weight": 0.5},
+    ]
+    resp = _advance(sid, new_allocations=bad)
+    assert resp.status_code == 400
+
+
+def test_cash_portfolio_unchanged_across_multiple_turns():
+    """Advancing several turns with no investment keeps value at 100k."""
+    scenario = _create_scenario(num_turns=5)
+    sid = scenario["scenario_id"]
+    for _ in range(3):
+        result = _advance(sid).json()
+    assert result["portfolio_value"] == 100_000.0
+    assert result["portfolio_cash"] == 100_000.0
+
+
+# ---------------------------------------------------------------------------
+# /scenario/allocate — set allocations without advancing the turn
+# ---------------------------------------------------------------------------
+
+
+def _allocate(scenario_id: str, allocations: list) -> dict:
+    resp = client.post("/scenario/allocate", json={
+        "scenario_id": scenario_id,
+        "player_id": "player1",
+        "allocations": allocations,
+    })
+    return resp
+
+
+def test_allocate_returns_200():
+    scenario = _create_scenario()
+    sid = scenario["scenario_id"]
+    resp = _allocate(sid, [{"asset_class": "equities", "weight": 0.5}])
+    assert resp.status_code == 200
+
+
+def test_allocate_does_not_advance_turn():
+    scenario = _create_scenario()
+    sid = scenario["scenario_id"]
+    _allocate(sid, [{"asset_class": "equities", "weight": 0.5}])
+    updated = client.get(f"/scenario/{sid}").json()
+    assert updated["current_turn"] == scenario["current_turn"]
+
+
+def test_allocate_updates_portfolio_allocations():
+    scenario = _create_scenario()
+    sid = scenario["scenario_id"]
+    _allocate(sid, [{"asset_class": "equities", "weight": 0.4}, {"asset_class": "bonds", "weight": 0.3}])
+    updated = client.get(f"/scenario/{sid}").json()
+    allocs = updated["portfolios"]["player1"]["allocations"]
+    weights = {a["asset_class"]: a["weight"] for a in allocs}
+    assert weights["equities"] == 0.4
+    assert weights["bonds"] == 0.3
+
+
+def test_allocate_updates_cash():
+    scenario = _create_scenario()
+    sid = scenario["scenario_id"]
+    _allocate(sid, [{"asset_class": "equities", "weight": 0.6}])
+    updated = client.get(f"/scenario/{sid}").json()
+    cash = updated["portfolios"]["player1"]["cash"]
+    assert cash == pytest.approx(40_000.0, abs=1)
+
+
+def test_allocate_then_advance_uses_allocations():
+    """Allocate first, then advance — invested portion should earn returns."""
+    scenario = _create_scenario(asset_classes=["equities", "bonds"])
+    sid = scenario["scenario_id"]
+    _allocate(sid, [{"asset_class": "equities", "weight": 0.5}, {"asset_class": "bonds", "weight": 0.5}])
+    result = _advance(sid).json()
+    # With 100% invested, portfolio should change from market returns
+    assert result["portfolio_value"] != 100_000.0
+
+
+def test_allocate_rejects_invalid_weights():
+    scenario = _create_scenario()
+    sid = scenario["scenario_id"]
+    resp = _allocate(sid, [{"asset_class": "equities", "weight": 1.5}])
+    assert resp.status_code == 400

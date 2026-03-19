@@ -1,0 +1,70 @@
+{
+  "news_types": {
+    "major": {
+      "description": "The biggest global events — crashes, wars, banking panics, emergency interventions. Always grounded in curated historical sources.",
+      "categories": {
+        "global_crash": {
+          "description": "Broad market crashes affecting multiple asset classes simultaneously (e.g. 2008 GFC, 2020 COVID crash)."
+        },
+        "banking_panic": {
+          "description": "Systemic banking failures or liquidity crises threatening the financial system (e.g. Lehman collapse, SVB failure)."
+        },
+        "war_escalation": {
+          "description": "Armed conflicts or geopolitical confrontations that disrupt global markets (e.g. Gulf War oil shock, Russia-Ukraine invasion)."
+        },
+        "recession_onset": {
+          "description": "Official or widely-recognised start of an economic recession (e.g. NBER-declared contractions)."
+        },
+        "emergency_policy_intervention": {
+          "description": "Extraordinary central-bank or government actions outside normal policy cadence (e.g. emergency rate cuts, QE launches, bailouts)."
+        },
+        "major_commodity_shock": {
+          "description": "Extreme commodity price moves driven by supply disruptions or geopolitical events (e.g. 1973 oil embargo, 2022 energy crisis)."
+        }
+      }
+    },
+    "impactful": {
+      "description": "Important but secondary events — rate hikes, inflation surprises, oil spikes, policy tone shifts. Grounded in historical data where possible.",
+      "categories": {
+        "hawkish_rate_hike": {
+          "description": "Central bank raises interest rates, tightening monetary policy."
+        },
+        "dovish_rate_cut": {
+          "description": "Central bank lowers interest rates, easing monetary policy."
+        },
+        "inflation_surprise": {
+          "description": "CPI or PCE print significantly above or below consensus expectations."
+        },
+        "policy_guidance_shift": {
+          "description": "Change in forward guidance tone without an immediate rate move (e.g. 'patient' → 'data-dependent')."
+        },
+        "oil_price_spike": {
+          "description": "Crude oil price jumps >10% in a short period due to supply/demand imbalance."
+        },
+        "bond_yield_jump": {
+          "description": "Sharp rise in benchmark government bond yields signalling tightening financial conditions."
+        },
+        "safe_haven_rotation": {
+          "description": "Capital flows from risk assets into safe havens (gold, treasuries, CHF/JPY) during uncertainty."
+        }
+      }
+    },
+    "ordinary": {
+      "description": "Small routine market news — sector rotation, earnings tone, macro chatter. Template-based; no historical grounding required.",
+      "categories": {
+        "daily_macro_watch": {
+          "description": "Routine macro data releases and their market reaction (e.g. jobs report in line, PMI steady)."
+        },
+        "sector_rotation": {
+          "description": "Money moving between sectors (e.g. tech to defensives) without a major catalyst."
+        },
+        "earnings_tone": {
+          "description": "General corporate earnings sentiment (e.g. 'mixed earnings season', 'strong bank results')."
+        },
+        "market_chatter": {
+          "description": "Generic market colour and analyst commentary filling quiet news days."
+        }
+      }
+    }
+  }
+}

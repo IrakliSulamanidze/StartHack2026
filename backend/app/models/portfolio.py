@@ -26,8 +26,9 @@ class Portfolio(BaseModel):
 
     player_id: str
     scenario_id: str
-    initial_capital: float = 10_000.0
+    initial_capital: float = 100_000.0
+    cash: float = 100_000.0
     allocations: List[Allocation] = Field(default_factory=list)
     trade_history: List[Trade] = Field(default_factory=list)
     value_history: List[float] = Field(default_factory=list)
-    current_value: float = 10_000.0
+    current_value: float = 100_000.0

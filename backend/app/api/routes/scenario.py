@@ -1,10 +1,10 @@
 from fastapi import APIRouter, HTTPException
 
 from app.models.scenario import ScenarioConfig, ScenarioState
-from app.models.turn import TurnInput, TurnResult
+from app.models.turn import AllocateInput, TurnInput, TurnResult
 from app.services import store
 from app.services.scenario_service import create_scenario
-from app.services.turn_engine import advance_turn
+from app.services.turn_engine import advance_turn, apply_allocations
 
 router = APIRouter()
 
@@ -35,6 +35,28 @@ def get_scenario(scenario_id: str) -> ScenarioState:
     state = store.get(scenario_id)
     if state is None:
         raise HTTPException(status_code=404, detail=f"Scenario '{scenario_id}' not found.")
+    return state
+
+
+@router.post("/allocate", response_model=ScenarioState, summary="Set allocations without advancing the turn")
+def allocate_endpoint(alloc_input: AllocateInput) -> ScenarioState:
+    """
+    Update a player's portfolio allocations without advancing the turn.
+
+    Use this to invest or rebalance. The turn is NOT advanced —
+    call /advance separately to progress time.
+    """
+    state = store.get(alloc_input.scenario_id)
+    if state is None:
+        raise HTTPException(
+            status_code=404,
+            detail=f"Scenario '{alloc_input.scenario_id}' not found.",
+        )
+    try:
+        apply_allocations(state, alloc_input)
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc))
+    store.save(state)
     return state
 
 

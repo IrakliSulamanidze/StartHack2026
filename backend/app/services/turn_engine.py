@@ -26,18 +26,20 @@ from app.models.asset import SelectedAsset
 from app.models.event import ActiveEffect, GameEvent
 from app.models.portfolio import Allocation, Portfolio
 from app.models.scenario import ScenarioState
-from app.models.turn import TurnInput, TurnResult
+from app.models.turn import AllocateInput, TurnInput, TurnResult
 
 # ---------------------------------------------------------------------------
 # Constants
 # ---------------------------------------------------------------------------
 
 _MONTHS_PER_YEAR = 12
-_INITIAL_CAPITAL = 10_000.0
+_QUARTERS_PER_YEAR = 4
+_INITIAL_CAPITAL = 100_000.0
 
 # Turn-sigma scale factors relative to annualised vol
 _SIGMA_SCALE: Dict[str, float] = {
     TimeMode.MONTHLY: 1.0 / math.sqrt(_MONTHS_PER_YEAR),
+    TimeMode.QUARTERLY: 1.0 / math.sqrt(_QUARTERS_PER_YEAR),
     TimeMode.YEARLY: 1.0,
 }
 
@@ -122,11 +124,24 @@ def advance_turn(
         state.is_in_shock = abs(event_deltas.get(asset_class, 0.0)) > 3.0
 
     # ── Update portfolio value ───────────────────────────────────────────────
+    # Only the invested portion earns market returns. Cash stays flat.
+    invested_weight = sum(a.weight for a in portfolio.allocations)
+    invested_value = portfolio.current_value * invested_weight
+    cash_value = portfolio.cash  # cash portion is stable
+
     portfolio_return_pct = _weighted_return(portfolio.allocations, asset_returns)
-    portfolio.current_value = round(
-        portfolio.current_value * (1.0 + portfolio_return_pct / 100.0), 2
-    )
+    # portfolio_return_pct is weighted over the invested slice only;
+    # scale it to the total portfolio level for reporting.
+    if invested_weight > 0:
+        new_invested = round(invested_value * (1.0 + portfolio_return_pct / 100.0), 2)
+    else:
+        new_invested = 0.0
+    portfolio.current_value = round(new_invested + cash_value, 2)
+    # Recompute cash as the uninvested fraction of the new total.
+    portfolio.cash = round(portfolio.current_value * (1.0 - invested_weight), 2) if invested_weight < 1.0 else 0.0
     portfolio.value_history.append(portfolio.current_value)
+    # Convert to total-portfolio-level return for the result.
+    total_return_pct = round(((portfolio.current_value / portfolio.value_history[-2]) - 1.0) * 100.0, 4) if len(portfolio.value_history) >= 2 else 0.0
 
     # ── Update benchmark value ───────────────────────────────────────────────
     bench_return_pct = _benchmark_return(scenario.benchmark_weights, asset_returns)
@@ -153,7 +168,8 @@ def advance_turn(
         asset_states=scenario.asset_states,
         benchmark_state=scenario.benchmark_state,
         portfolio_value=portfolio.current_value,
-        portfolio_return_this_turn_pct=round(portfolio_return_pct, 4),
+        portfolio_return_this_turn_pct=total_return_pct,
+        portfolio_cash=portfolio.cash,
         events_this_turn=events_this_turn,
         is_game_over=scenario.is_complete,
     )
@@ -161,26 +177,37 @@ def advance_turn(
     return scenario, result
 
 
+def apply_allocations(
+    scenario: ScenarioState,
+    alloc_input: AllocateInput,
+) -> None:
+    """
+    Set a player's portfolio allocations WITHOUT advancing the turn.
+
+    Mutates `scenario` in place. The caller is responsible for persisting.
+    """
+    portfolio = _get_or_create_portfolio(scenario, alloc_input)
+    portfolio = _apply_allocations(portfolio, alloc_input.allocations, scenario.asset_classes)
+    scenario.portfolios[alloc_input.player_id] = portfolio
+
+
 # ---------------------------------------------------------------------------
 # Internal helpers
 # ---------------------------------------------------------------------------
 
 
-def _get_or_create_portfolio(scenario: ScenarioState, turn_input: TurnInput) -> Portfolio:
-    """Return existing portfolio for player_id, or create equal-weight default."""
+def _get_or_create_portfolio(scenario: ScenarioState, turn_input) -> Portfolio:
+    """Return existing portfolio for player_id, or create a 100% cash portfolio."""
     if turn_input.player_id in scenario.portfolios:
         return scenario.portfolios[turn_input.player_id].model_copy(deep=True)
 
-    n = len(scenario.asset_classes)
-    weight = round(1.0 / n, 6) if n > 0 else 1.0
-    allocations = [
-        Allocation(asset_class=ac, weight=weight) for ac in scenario.asset_classes
-    ]
+    # Player starts with 100% cash — no investments until they allocate.
     return Portfolio(
         player_id=turn_input.player_id,
         scenario_id=scenario.scenario_id,
         initial_capital=_INITIAL_CAPITAL,
-        allocations=allocations,
+        cash=_INITIAL_CAPITAL,
+        allocations=[],
         value_history=[_INITIAL_CAPITAL],
         current_value=_INITIAL_CAPITAL,
     )
@@ -196,9 +223,10 @@ def _apply_allocations(
 
     Validates:
     - All asset_classes are valid for this scenario.
-    - Total weight is within [0.999, 1.001] (floating-point tolerance).
+    - Each weight is in [0, 1].
+    - Sum of weights in [0, 1.001] — remainder is cash.
 
-    Raises ValueError on validation failure.
+    After applying, cash = current_value × (1 − sum_of_weights).
     """
     for alloc in new_allocs:
         if alloc.asset_class not in valid_classes:
@@ -212,12 +240,16 @@ def _apply_allocations(
             )
 
     total = sum(a.weight for a in new_allocs)
-    if not (0.999 <= total <= 1.001):
+    if total > 1.001:
         raise ValueError(
-            f"Allocation weights must sum to 1.0 (got {total:.4f})."
+            f"Allocation weights must sum to at most 1.0 (got {total:.4f})."
         )
 
-    portfolio.allocations = new_allocs
+    # Strip zero-weight allocations so they don't show as holdings.
+    portfolio.allocations = [a for a in new_allocs if a.weight > 0.0]
+    # Cash = the uninvested portion of current portfolio value.
+    invested_weight = min(sum(a.weight for a in portfolio.allocations), 1.0)
+    portfolio.cash = round(portfolio.current_value * (1.0 - invested_weight), 2)
     return portfolio
 
 
