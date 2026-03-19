@@ -153,9 +153,13 @@ Create a new game scenario. Everything is seeded and fully deterministic — the
 
   "event_schedule": [
     { "turn": 4, "event_id": "<uuid>", "revealed": false }
-  ]
+  ],
+
+  "news_history": {}
 }
 ```
+
+> `news_history` is a dict keyed by turn number (as a string in JSON). Each value is a `NewsArticle` (see [Advance response](#post-scenarioadvance)). Empty on creation; populated as turns are advanced. Narrative-only — does not affect prices or scoring.
 
 ### Error responses
 
@@ -270,9 +274,21 @@ Asset class must be one of the `asset_classes` in this scenario.
 
   "is_game_over": false,
 
-  "next_turn_preview": null
+  "next_turn_preview": null,
+
+  "news": {
+    "headline": "Markets React to Central Bank Decision",
+    "short_bulletin": "Interest rates held steady...",
+    "beginner_explanation": "The central bank decided not to change rates...",
+    "historical_example": null,
+    "selected_event_ids": ["<event_id>"],
+    "generation_mode": "template_only",
+    "validation_flags": []
+  }
 }
 ```
+
+> `news` is `null` when no events fired this turn or when the news generator is unavailable. It is narrative-only and does not affect deterministic price/scoring calculations. The same article is also persisted in the scenario's `news_history` (keyed by `turn_number`) so it survives page reloads via `GET /scenario/{id}`.
 
 ### Error responses
 

@@ -5,6 +5,7 @@ from pydantic import BaseModel, Field
 from app.core.constants import Difficulty, GameMode, TimeMode
 from app.models.asset import AssetState, BenchmarkState, SelectedAsset
 from app.models.event import ActiveEffect, GameEvent, ScheduledEvent
+from app.models.news import NewsArticle
 from app.models.portfolio import Portfolio
 
 
@@ -76,3 +77,7 @@ class ScenarioState(BaseModel):
     # Fixed weights used to track the reference portfolio each turn.
     # Keys are asset_class names that overlap with the scenario's asset_classes.
     benchmark_weights: Dict[str, float] = Field(default_factory=dict)
+
+    # ── News history ─────────────────────────────────────────────────────────
+    # Narrative-only news articles keyed by turn number.
+    news_history: Dict[int, NewsArticle] = Field(default_factory=dict)

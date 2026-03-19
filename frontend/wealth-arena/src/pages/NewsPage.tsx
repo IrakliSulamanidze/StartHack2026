@@ -1,5 +1,6 @@
 import { useState, useCallback } from 'react';
 import { useGame } from '../context/GameContext';
+import NewsPanel from '../components/NewsPanel';
 
 const AI_SYSTEM_PROMPT = `You are the "Market Mentor" AI inside an investment education game for young adults (ages 18-30) who are beginners with no finance background.
 
@@ -143,6 +144,16 @@ export default function NewsPage() {
           className="ml-auto bg-arena-bg border border-arena-border rounded-lg px-3 py-1.5 text-xs text-white placeholder-arena-text-dim w-36 focus:outline-none focus:ring-1 focus:ring-arena-accent/50"
         />
       </div>
+
+      {/* Backend News Articles (from scenario/advance) */}
+      {state.newsHistory.length > 0 && (
+        <div className="space-y-4">
+          <p className="text-xs uppercase tracking-wider text-arena-text-dim font-semibold">AI News Reports</p>
+          {state.newsHistory.map((article, idx) => (
+            <NewsPanel key={`backend-news-${idx}`} article={article} />
+          ))}
+        </div>
+      )}
 
       {/* News Feed */}
       {filteredNews.length === 0 ? (

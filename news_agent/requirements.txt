@@ -1,0 +1,4 @@
+# Optional dependency for Gemini provider.
+# Only needed if running in gemini mode.
+# Install with: pip install google-genai
+google-genai>=1.0.0

@@ -5,6 +5,7 @@ from app.models.turn import AllocateInput, TurnInput, TurnResult
 from app.services import store
 from app.services.scenario_service import create_scenario
 from app.services.turn_engine import advance_turn, apply_allocations
+from app.services.news_adapter import generate_news_for_turn
 
 router = APIRouter()
 
@@ -82,4 +83,13 @@ def advance_scenario(turn_input: TurnInput) -> TurnResult:
     except ValueError as exc:
         raise HTTPException(status_code=400, detail=str(exc))
     store.save(updated_state)
+
+    # Narrative-only news — runs AFTER deterministic turn is final.
+    result.news = generate_news_for_turn(updated_state, result)
+
+    # Persist news into scenario state so GET returns full history.
+    if result.news is not None:
+        updated_state.news_history[result.turn_number] = result.news
+        store.save(updated_state)
+
     return result

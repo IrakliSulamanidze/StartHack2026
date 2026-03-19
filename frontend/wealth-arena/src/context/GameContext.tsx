@@ -7,6 +7,7 @@ import type {
   BackendTurnResult,
   BackendScenarioCreateRequest,
   BackendAllocation,
+  BackendNewsArticle,
 } from '../types/backend';
 
 // ── Types ──
@@ -88,6 +89,10 @@ export interface GameState {
   lastTurnResult: BackendTurnResult | null;
   backendLoading: boolean;
   backendError: string | null;
+
+  // ── Backend news (from TurnResult.news) ──
+  latestNews: BackendNewsArticle | null;
+  newsHistory: BackendNewsArticle[];
 }
 
 // ── Actions ──
@@ -164,7 +169,10 @@ function createInitialState(): GameState {
     backendState: null,
     lastTurnResult: null,
     backendLoading: false,
-    backendError: null,  };
+    backendError: null,
+    latestNews: null,
+    newsHistory: [],
+  };
   return state;
 }
 
@@ -295,6 +303,12 @@ function gameReducer(state: GameState, action: Action): GameState {
       const s = action.scenario;
       // Map backend events into the legacy newsItems so NewsPage can display them
       const initialNews: NewsItem[] = [];
+      // Hydrate news history from persisted backend state
+      const savedNews = s.news_history ?? {};
+      const hydratedHistory = Object.keys(savedNews)
+        .map(Number)
+        .sort((a, b) => b - a)
+        .map(turn => savedNews[turn]);
       return {
         ...state,
         scenarioId: s.scenario_id,
@@ -307,6 +321,8 @@ function gameReducer(state: GameState, action: Action): GameState {
         newsItems: initialNews,
         portfolioHistory: [{ timestamp: Date.now(), value: 100_000, round: 0 }],
         page: 'game' as GamePage,
+        latestNews: hydratedHistory.length > 0 ? hydratedHistory[0] : null,
+        newsHistory: hydratedHistory,
       };
     }
 
@@ -324,6 +340,8 @@ function gameReducer(state: GameState, action: Action): GameState {
         impactDirection: e.impacts.reduce((sum, i) => sum + i.delta_pct, 0) >= 0 ? 'positive' as const : 'negative' as const,
         round: r.turn_number,
       }));
+      // Capture backend-provided news article
+      const incomingNews = r.news ?? null;
       return {
         ...state,
         scenarioId: s.scenario_id,
@@ -337,6 +355,8 @@ function gameReducer(state: GameState, action: Action): GameState {
           ...state.portfolioHistory,
           { timestamp: Date.now(), value: r.portfolio_value, round: r.turn_number },
         ],
+        latestNews: incomingNews,
+        newsHistory: incomingNews ? [incomingNews, ...state.newsHistory] : state.newsHistory,
       };
     }
 

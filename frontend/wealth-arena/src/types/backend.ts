@@ -115,6 +115,27 @@ export interface BackendScenarioState {
   active_effects: unknown[];
   events: Record<string, BackendGameEvent>;
   event_schedule: BackendScheduledEvent[];
+  news_history: Record<number, BackendNewsArticle>;
+}
+
+// ── News models (from POST /scenario/advance → TurnResult.news) ──
+
+export interface BackendNewsHistoricalExample {
+  title: string;
+  why_similar: string;
+  what_happened: string;
+  beginner_takeaway: string;
+  source_event_ids: string[];
+}
+
+export interface BackendNewsArticle {
+  headline: string;
+  short_bulletin: string;
+  beginner_explanation: string;
+  historical_example: BackendNewsHistoricalExample | null;
+  selected_event_ids: string[];
+  generation_mode: 'template_only' | 'mock' | 'gemini';
+  validation_flags: string[];
 }
 
 // ── Turn Result (response from POST /scenario/advance) ──
@@ -131,6 +152,7 @@ export interface BackendTurnResult {
   events_this_turn: BackendGameEvent[];
   is_game_over: boolean;
   next_turn_preview: string | null;
+  news: BackendNewsArticle | null;
 }
 
 // ── Scenario Create Request ──

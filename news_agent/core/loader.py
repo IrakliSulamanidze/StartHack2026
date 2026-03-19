@@ -178,3 +178,72 @@ def load_templates() -> Dict[str, Dict[str, List[HeadlineTemplate]]]:
 def load_all():
     """Convenience: load all four curated datasets. Returns a 4-tuple."""
     return load_manifest(), load_taxonomy(), load_events(), load_templates()
+
+
+# ---------------------------------------------------------------------------
+# Enriched events (optional)
+# ---------------------------------------------------------------------------
+
+_ENRICHED_FILE = _CURATED_DIR / "historical_events_enriched.json"
+
+_ENRICHED_REQUIRED = [
+    "event_id", "news_type", "category", "title", "date_label", "region",
+    "severity", "short_summary", "affected_asset_classes",
+    "directional_impact", "beginner_explanation", "retrieval_tags", "status",
+]
+
+
+def load_enriched_events() -> List[HistoricalEvent]:
+    """Load historical_events_enriched.json into HistoricalEvent objects.
+
+    The enriched file has extra fields (``source_type``, ``source_refs``,
+    ``confidence``, ``derivation_method``) that are mapped into
+    ``historical_basis_source_ids`` and ``retrieval_tags`` so the records
+    work seamlessly with the existing retrieval system.
+
+    Raises ``DatasetLoadError`` if the file is missing or malformed.
+    """
+    if not _ENRICHED_FILE.exists():
+        raise DatasetLoadError(f"Missing enriched file: {_ENRICHED_FILE}")
+    try:
+        data = json.loads(_ENRICHED_FILE.read_text(encoding="utf-8"))
+    except json.JSONDecodeError as exc:
+        raise DatasetLoadError(f"Invalid JSON in enriched file: {exc}") from exc
+
+    raw_events = data.get("events", [])
+    if not isinstance(raw_events, list):
+        raise DatasetLoadError("enriched file 'events' must be a JSON array")
+
+    events: List[HistoricalEvent] = []
+    for i, item in enumerate(raw_events):
+        _require_keys(item, _ENRICHED_REQUIRED, f"enriched_events[{i}]")
+        events.append(HistoricalEvent(
+            event_id=item["event_id"],
+            news_type=item["news_type"],
+            category=item["category"],
+            title=item["title"],
+            historical_basis_source_ids=item.get("source_refs", []),
+            date_label=item["date_label"],
+            region=item["region"],
+            severity=item["severity"],
+            short_summary=item["short_summary"],
+            affected_asset_classes=item["affected_asset_classes"],
+            directional_impact=item["directional_impact"],
+            beginner_explanation=item["beginner_explanation"],
+            retrieval_tags=item["retrieval_tags"],
+            status=item["status"],
+        ))
+    return events
+
+
+def load_events_combined() -> List[HistoricalEvent]:
+    """Load original + enriched events into a single list.
+
+    If the enriched file doesn't exist, falls back to original only.
+    """
+    base = load_events()
+    try:
+        enriched = load_enriched_events()
+    except DatasetLoadError:
+        return base
+    return base + enriched

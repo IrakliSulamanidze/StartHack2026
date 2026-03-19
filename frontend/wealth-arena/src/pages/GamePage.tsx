@@ -1,5 +1,6 @@
 import { useGame } from '../context/GameContext';
 import type { BackendAssetState, BackendAllocation } from '../types/backend';
+import NewsPanel from '../components/NewsPanel';
 import {
   AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip,
   ResponsiveContainer,
@@ -315,6 +316,14 @@ export default function GamePage() {
           })}
         </div>
       </div>
+
+      {/* ── Latest News Article (from backend composer) ── */}
+      {state.latestNews && (
+        <div>
+          <p className="text-xs uppercase tracking-wider text-arena-text-dim font-semibold mb-2">Latest News</p>
+          <NewsPanel article={state.latestNews} />
+        </div>
+      )}
 
       {/* ── Market Events ── */}
       <div className="bg-arena-surface border border-arena-border rounded-xl p-5 shadow-md">
