@@ -4,6 +4,7 @@ from app.models.scenario import ScenarioConfig, ScenarioState
 from app.models.turn import TurnInput, TurnResult
 from app.services import store
 from app.services.scenario_service import create_scenario
+from app.services.turn_engine import advance_turn
 
 router = APIRouter()
 
@@ -47,10 +48,16 @@ def advance_scenario(turn_input: TurnInput) -> TurnResult:
     - Regime-based asset price updates (bounded, deterministic).
     - Triggered events for this turn.
     - Portfolio and benchmark value updates.
-
-    NOTE: Turn engine is implemented in Phase 2.
     """
-    raise HTTPException(
-        status_code=501,
-        detail="Turn engine is not yet implemented. Coming in Phase 2.",
-    )
+    state = store.get(turn_input.scenario_id)
+    if state is None:
+        raise HTTPException(
+            status_code=404,
+            detail=f"Scenario '{turn_input.scenario_id}' not found.",
+        )
+    try:
+        updated_state, result = advance_turn(state, turn_input)
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc))
+    store.save(updated_state)
+    return result

@@ -507,6 +507,26 @@ REGIME_LIBRARY: Dict[str, RegimeTemplate] = {
 }
 
 
+# ---------------------------------------------------------------------------
+# Benchmark weights per regime
+# ---------------------------------------------------------------------------
+# Fixed-weight portfolio used as the comparison benchmark for each regime.
+# Only asset_classes that are active in the scenario are used; the weights are
+# then re-normalised by scenario_service.py so they always sum to exactly 1.0.
+REGIME_BENCHMARK_WEIGHTS: Dict[str, Dict[str, float]] = {
+    RegimeType.BULL_GROWTH:         {"equities": 0.60, "bonds": 0.30, "gold": 0.05, "crypto": 0.05},
+    RegimeType.RECESSION:           {"equities": 0.20, "bonds": 0.60, "gold": 0.20},
+    RegimeType.INFLATION_SHOCK:     {"equities": 0.30, "bonds": 0.20, "gold": 0.30, "fx": 0.20},
+    RegimeType.RATE_HIKE_CYCLE:     {"equities": 0.30, "bonds": 0.50, "fx": 0.20},
+    RegimeType.STAGFLATION:         {"equities": 0.25, "bonds": 0.25, "gold": 0.30, "fx": 0.20},
+    RegimeType.BANKING_PANIC:       {"equities": 0.10, "bonds": 0.40, "gold": 0.30, "fx": 0.20},
+    RegimeType.COMMODITY_BOOM:      {"equities": 0.35, "bonds": 0.20, "gold": 0.30, "fx": 0.15},
+    RegimeType.GEOPOLITICAL_CRISIS: {"equities": 0.20, "bonds": 0.35, "gold": 0.35, "fx": 0.10},
+    RegimeType.POST_CRASH_RECOVERY: {"equities": 0.70, "bonds": 0.20, "gold": 0.10},
+    RegimeType.TECH_BUBBLE:         {"equities": 0.50, "bonds": 0.10, "crypto": 0.40},
+}
+
+
 # Which regimes are appropriate per difficulty level.
 # Beginner starts in benign environments; advanced faces the harshest regimes.
 DIFFICULTY_REGIMES: Dict[str, List[str]] = {

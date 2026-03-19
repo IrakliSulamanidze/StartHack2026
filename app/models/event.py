@@ -42,3 +42,22 @@ class ScheduledEvent(BaseModel):
     event_id: str
     # False until the turn engine reveals it to the player.
     revealed: bool = False
+
+
+class ActiveEffect(BaseModel):
+    """
+    A market event impact that persists across multiple turns with exponential decay.
+
+    When an event fires on turn T:
+    - The full delta_pct is applied immediately.
+    - An ActiveEffect is created for the RESIDUAL on turns T+1, T+2, ...
+    - Each subsequent turn: remaining_delta_pct *= decay_factor; turns_remaining -= 1
+    - Removed when turns_remaining == 0 or abs(remaining_delta_pct) < 0.01
+    """
+
+    event_id: str
+    asset_class: str
+    # Current residual impact to apply this turn (shrinks by decay_factor each turn).
+    remaining_delta_pct: float
+    decay_factor: float
+    turns_remaining: int

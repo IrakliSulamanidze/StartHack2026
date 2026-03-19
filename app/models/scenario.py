@@ -3,8 +3,9 @@ from typing import Dict, List, Optional
 from pydantic import BaseModel, Field
 
 from app.core.constants import Difficulty, GameMode, TimeMode
-from app.models.asset import AssetState, BenchmarkState
-from app.models.event import GameEvent, ScheduledEvent
+from app.models.asset import AssetState, BenchmarkState, SelectedAsset
+from app.models.event import ActiveEffect, GameEvent, ScheduledEvent
+from app.models.portfolio import Portfolio
 
 
 class ScenarioConfig(BaseModel):
@@ -58,3 +59,20 @@ class ScenarioState(BaseModel):
     game_mode: GameMode
     ai_level: int
     is_complete: bool = False
+
+    # ── Concrete asset selection (populated at scenario creation) ────────────
+    # Maps asset_class → selected real instrument (e.g. "equities" → SMI).
+    selected_assets: Dict[str, SelectedAsset] = Field(default_factory=dict)
+
+    # ── Per-player portfolio state ───────────────────────────────────────────
+    # Keyed by player_id. Portfolios are created on first advance call.
+    portfolios: Dict[str, Portfolio] = Field(default_factory=dict)
+
+    # ── Multi-turn event effects ─────────────────────────────────────────────
+    # Residual lingering impacts from events still in effect.
+    active_effects: List[ActiveEffect] = Field(default_factory=list)
+
+    # ── Benchmark composition ────────────────────────────────────────────────
+    # Fixed weights used to track the reference portfolio each turn.
+    # Keys are asset_class names that overlap with the scenario's asset_classes.
+    benchmark_weights: Dict[str, float] = Field(default_factory=dict)

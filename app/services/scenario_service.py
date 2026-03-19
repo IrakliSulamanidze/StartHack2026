@@ -16,7 +16,8 @@ from typing import Dict, List, Optional, Tuple
 
 from app.core.constants import Difficulty, EventSeverity, TimeMode
 from app.core.events import EVENT_TEMPLATES, EventTemplate
-from app.core.regimes import DIFFICULTY_REGIMES, REGIME_LIBRARY, RegimeTemplate
+from app.core.regimes import DIFFICULTY_REGIMES, REGIME_BENCHMARK_WEIGHTS, REGIME_LIBRARY, RegimeTemplate
+from app.data.asset_selector import select_assets_for_scenario
 from app.models.asset import AssetState, BenchmarkState
 from app.models.event import EventImpact, GameEvent, ScheduledEvent
 from app.models.scenario import ScenarioConfig, ScenarioState
@@ -53,10 +54,15 @@ def create_scenario(config: ScenarioConfig) -> ScenarioState:
         (config.difficulty, config.time_mode), 24
     )
 
-    # ── 3. Initialise asset states (price index starts at 100) ───────────────
+    # ── 3. Select concrete instruments from registry ─────────────────────────
+    selected_assets = select_assets_for_scenario(config.asset_classes, rng)
+
+    # ── 4. Initialise asset states (price index starts at 100) ───────────────
     asset_states: Dict[str, AssetState] = {
         ac: AssetState(
             asset_class=ac,
+            symbol=selected_assets[ac].symbol,
+            name=selected_assets[ac].name,
             current_price=100.0,
             price_history=[100.0],
             cumulative_return_pct=0.0,
@@ -65,7 +71,7 @@ def create_scenario(config: ScenarioConfig) -> ScenarioState:
         for ac in config.asset_classes
     }
 
-    # ── 4. Initialise benchmark ──────────────────────────────────────────────
+    # ── 5. Initialise benchmark ──────────────────────────────────────────────
     benchmark_state = BenchmarkState(
         label=regime.benchmark_label,
         current_value=100.0,
@@ -73,7 +79,19 @@ def create_scenario(config: ScenarioConfig) -> ScenarioState:
         cumulative_return_pct=0.0,
     )
 
-    # ── 5. Pre-generate event schedule ──────────────────────────────────────
+    # ── 6. Compute and normalise benchmark weights for this regime ───────────
+    raw_weights = REGIME_BENCHMARK_WEIGHTS.get(regime_key, {})
+    # Keep only asset classes that are active in this scenario
+    filtered = {ac: w for ac, w in raw_weights.items() if ac in config.asset_classes}
+    if filtered:
+        total = sum(filtered.values())
+        benchmark_weights = {ac: round(w / total, 6) for ac, w in filtered.items()}
+    else:
+        # Fallback: equal weight over all active classes
+        n = len(config.asset_classes)
+        benchmark_weights = {ac: round(1.0 / n, 6) for ac in config.asset_classes}
+
+    # ── 7. Pre-generate event schedule ──────────────────────────────────────
     events, event_schedule = _generate_events(
         regime, num_turns, config.asset_classes, rng
     )
@@ -94,6 +112,8 @@ def create_scenario(config: ScenarioConfig) -> ScenarioState:
         game_mode=config.game_mode,
         ai_level=config.ai_level,
         is_complete=False,
+        selected_assets=selected_assets,
+        benchmark_weights=benchmark_weights,
     )
 
 
