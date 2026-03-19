@@ -6,9 +6,9 @@
     "categories_supported": ["recession_onset", "global_crash"],
     "ingestion_mode": "local_file",
     "local_path": "raw/major/nber_business_cycles.xlsx",
-    "origin_url": "https://www.nber.org/research/data/us-business-cycle-expansions-and-contractions",
+    "origin_url": "https://data.nber.org/data/cycles/bcdc_07192021_0.xlsx",
     "recommended_usage": "Map regime turns to historical recession start/end dates. Use peak/trough dates to anchor Major recession_onset and global_crash events.",
-    "notes": "Download the Excel or JSON version from NBER and place at local_path.",
+    "notes": "Downloaded from NBER data server. File contains peak/trough dates.",
     "licensing_note": "Public domain / fair-use research data."
   },
   {
@@ -18,9 +18,9 @@
     "categories_supported": ["oil_price_spike", "major_commodity_shock"],
     "ingestion_mode": "local_file",
     "local_path": "raw/impactful/eia_oil_prices.xls",
-    "origin_url": "https://www.eia.gov/dnav/pet/pet_pri_spt_s1_d.htm",
+    "origin_url": "https://www.eia.gov/dnav/pet/hist_xls/RWTCd.xls",
     "recommended_usage": "Identify historical oil price spikes (>20% in a quarter) to ground commodity-shock and oil_price_spike events.",
-    "notes": "Download the XLS workbook and place at local_path.",
+    "notes": "Downloaded WTI crude daily spot prices (RWTCd series).",
     "licensing_note": "US government public data."
   },
   {
@@ -32,7 +32,7 @@
     "local_path": "raw/impactful/fed_monetary_policy.xml",
     "origin_url": "https://www.federalreserve.gov/feeds/press_monetary.xml",
     "recommended_usage": "Extract FOMC decision dates and rate-change direction for rate_hike / rate_cut events.",
-    "notes": "Save the XML feed and place at local_path. The feed contains recent items; for historical depth you may need to supplement from FRED.",
+    "notes": "Downloaded RSS/XML feed. Contains recent FOMC items; for historical depth supplement from FRED.",
     "licensing_note": "US government public data."
   },
   {
@@ -42,9 +42,9 @@
     "categories_supported": ["hawkish_rate_hike", "dovish_rate_cut", "policy_guidance_shift"],
     "ingestion_mode": "local_file",
     "local_path": "raw/impactful/ecb_mid_decisions.xml",
-    "origin_url": "https://www.ecb.europa.eu/rss/press_monetarydecisions.xml",
+    "origin_url": "http://mid.ecb.europa.eu/rss/mid.xml",
     "recommended_usage": "European rate decisions. Pair with Fed data for global-policy events.",
-    "notes": "Save the XML feed and place at local_path.",
+    "notes": "Downloaded ECB MID RSS feed.",
     "licensing_note": "ECB public data; check reuse terms."
   },
   {
@@ -54,9 +54,9 @@
     "categories_supported": ["inflation_surprise"],
     "ingestion_mode": "local_file",
     "local_path": "raw/impactful/bls_cpi_archive.zip",
-    "origin_url": "https://www.bls.gov/cpi/data.htm",
+    "origin_url": "https://www.bls.gov/cpi/tables/supplemental-files/archive-2022.zip",
     "recommended_usage": "Compute month-over-month and year-over-year CPI changes to detect inflation surprises (>0.5% MoM or >5% YoY).",
-    "notes": "Download annual archive ZIP or individual series files and place at local_path.",
+    "notes": "BLS blocks automated downloads. Download manually from a browser and place at local_path.",
     "licensing_note": "US government public data."
   },
   {
@@ -66,9 +66,9 @@
     "categories_supported": ["banking_panic", "global_crash", "emergency_policy_intervention"],
     "ingestion_mode": "local_file",
     "local_path": "raw/major/nyfed_crisis_timeline.pdf",
-    "origin_url": "https://www.newyorkfed.org/research/global-economy/policyresponses.html",
+    "origin_url": "https://www.newyorkfed.org/medialibrary/media/research/global_economy/Crisis_Timeline.pdf",
     "recommended_usage": "Reference for Major banking_panic and emergency_policy_intervention events during the GFC. Extract key date milestones.",
-    "notes": "Download the PDF and place at local_path. Will need manual or scripted extraction.",
+    "notes": "Downloaded Crisis_Timeline.pdf. Will need manual or scripted extraction.",
     "licensing_note": "US government public data."
   },
   {
