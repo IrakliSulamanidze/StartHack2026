@@ -12,9 +12,9 @@ interface Props {
 }
 
 const MODE_CONFIG = {
-  coach: { name: 'Coach', icon: '🎓', placeholder: 'Ask your coach for guidance...', color: 'arena-accent' },
-  assistant: { name: 'Assistant', icon: '🤖', placeholder: 'Ask for data analysis...', color: 'blue-400' },
-  terminal: { name: 'Terminal', icon: '💀', placeholder: 'Query the oracle...', color: 'arena-danger' },
+  coach: { name: 'Coach', placeholder: 'Ask your coach for guidance...', color: 'arena-accent' },
+  assistant: { name: 'Assistant', placeholder: 'Ask for data analysis...', color: 'blue-400' },
+  terminal: { name: 'AI Helper', placeholder: 'Ask me anything...', color: 'arena-accent' },
 } as const;
 
 /** Lightweight markdown-ish renderer for AI responses */
@@ -145,7 +145,7 @@ export default function AIPanel({ mode, onAsk }: Props) {
   return (
     <div className="flex flex-col h-full bg-arena-surface border border-arena-border rounded-xl overflow-hidden">
       <div className="flex items-center gap-2 px-3 py-2 border-b border-arena-border">
-        <span>{cfg.icon}</span>
+        <span className={`w-2.5 h-2.5 rounded-full bg-${cfg.color}`} />
         <span className="text-sm font-semibold text-white">{cfg.name} Mode</span>
         <span className={`ml-auto w-2 h-2 rounded-full bg-${cfg.color} animate-pulse`} />
       </div>
@@ -198,10 +198,10 @@ export default function AIPanel({ mode, onAsk }: Props) {
 function getIntro(mode: AIMode): string {
   switch (mode) {
     case 'coach':
-      return "Hey! I'm your strategy coach 🎓 I'll help you figure out which headlines matter for your archetype, whether rebalancing makes sense right now, and how your strategy plays out in the real world. What are you thinking about?";
+      return "I'm your strategy coach. I'll help you figure out which headlines matter for your archetype, whether rebalancing makes sense right now, and how your strategy plays out in the real world. What are you thinking about?";
     case 'assistant':
       return "Analysis mode. I'll summarize and cluster the headlines for you, and flag which asset classes they touch. Ask me for inference if you want my read on implications.";
     case 'terminal':
-      return ">> TERMINAL ONLINE. Raw data feed.\n>> Query: headlines | exposure | scenario\n>> Prompt precisely. Vague input = vague output.";
+      return "I'm your AI helper. Ask me anything — about the headlines, your portfolio, what to do this round, or how investing works in general. No wrong questions.";
   }
 }

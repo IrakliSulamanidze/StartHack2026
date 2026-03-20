@@ -23,7 +23,7 @@ export default function AllocationEditor({ allocation, onChange, disabled, curre
   return (
     <div className="space-y-2">
       <div className="flex items-center justify-between">
-        <h3 className="text-sm font-semibold text-white">💼 Portfolio Allocation</h3>
+        <h3 className="text-sm font-semibold text-white">Portfolio Allocation</h3>
         <span className={`text-xs font-mono ${isValid ? 'text-arena-accent' : 'text-arena-danger'}`}>
           {total}%
         </span>
@@ -45,7 +45,7 @@ export default function AllocationEditor({ allocation, onChange, disabled, curre
             >
               <div className="flex items-center gap-2">
                 <span className="text-xs">{isOpen ? '▼' : '►'}</span>
-                <span className="text-sm">{cat.icon}</span>
+                <span className="w-2.5 h-2.5 rounded-full shrink-0" style={{ backgroundColor: cat.color }} />
                 <span className="text-xs font-semibold text-white">{cat.label}</span>
               </div>
               <span

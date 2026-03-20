@@ -72,7 +72,7 @@ export default function ProfilePage() {
           <Stat label="Total Games" value="0" />
           <Stat label="Best Score" value="—" />
           <Stat label="Daily Streak" value="0" />
-          <Stat label="Favorite Archetype" value="—" />
+          <Stat label="Favorite Profile" value="—" />
         </div>
       </div>
     </div>

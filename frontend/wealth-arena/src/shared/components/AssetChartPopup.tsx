@@ -62,7 +62,7 @@ export default function AssetChartPopup({ symbol, name, onClose, currentRound }:
           <h3 className="text-lg font-bold text-white mb-1">{name}</h3>
           <p className="text-xs text-arena-text-dim font-mono">{symbol}</p>
           {currentRound && currentRound > 1 && (
-            <p className="text-[10px] text-arena-accent mt-0.5 mb-3">📍 Chart includes game data through round {currentRound - 1}</p>
+            <p className="text-[10px] text-arena-accent mt-0.5 mb-3">Chart includes game data through round {currentRound - 1}</p>
           )}
           {(!currentRound || currentRound <= 1) && <div className="mb-4" />}
 

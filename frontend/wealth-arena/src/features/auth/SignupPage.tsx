@@ -10,11 +10,11 @@ export default function SignupPage() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
 
-  function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError('');
     try {
-      signup(name, email, password);
+      await signup(name, email, password);
       navigate('/dashboard');
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Signup failed');
@@ -25,8 +25,9 @@ export default function SignupPage() {
     <div className="min-h-screen bg-arena-bg flex items-center justify-center px-4">
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
-          <Link to="/" className="inline-flex items-center gap-2 text-2xl font-bold text-white mb-2">
-            <span>⚔️</span> Last Portfolio Standing
+          <Link to="/" className="inline-flex flex-col items-center gap-3 mb-2">
+            <img src="/logo.png" alt="Endgame Securities" className="h-32 w-auto" />
+            <span className="text-2xl font-bold text-white">Endgame Securities</span>
           </Link>
           <p className="text-arena-text-dim">Create your investor profile</p>
         </div>

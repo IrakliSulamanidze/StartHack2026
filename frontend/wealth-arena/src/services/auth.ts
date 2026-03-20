@@ -1,6 +1,6 @@
 /**
- * Local auth service — playtoy/localStorage-based.
- * Designed so it can later be swapped with real backend auth.
+ * Auth service — calls real backend API.
+ * Falls back to localStorage if backend is unreachable.
  */
 
 export interface UserProfile {
@@ -11,6 +11,8 @@ export interface UserProfile {
 }
 
 const AUTH_KEY = 'lps_auth_user';
+const TOKEN_KEY = 'lps_auth_token';
+const BASE_URL = import.meta.env.VITE_API_BASE_URL?.replace(/\/+$/, '') ?? `http://${window.location.hostname}:8000`;
 
 export function getStoredUser(): UserProfile | null {
   try {
@@ -22,39 +24,61 @@ export function getStoredUser(): UserProfile | null {
   }
 }
 
-export function login(email: string, _password: string): UserProfile {
-  // In real implementation, this would call backend auth API
-  const existing = getAllUsers().find(u => u.email === email);
-  if (existing) {
-    localStorage.setItem(AUTH_KEY, JSON.stringify(existing));
-    return existing;
+export function getToken(): string | null {
+  return localStorage.getItem(TOKEN_KEY);
+}
+
+export async function login(email: string, password: string): Promise<UserProfile> {
+  const res = await fetch(`${BASE_URL}/auth/login`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email, password }),
+  });
+
+  if (!res.ok) {
+    const body = await res.json().catch(() => ({ detail: 'Login failed' }));
+    throw new Error(body.detail || 'Invalid email or password');
   }
-  // Auto-create for demo
+
+  const data = await res.json();
   const user: UserProfile = {
-    id: crypto.randomUUID(),
-    name: email.split('@')[0],
-    email,
+    id: data.user.id,
+    name: data.user.name,
+    email: data.user.email,
     createdAt: new Date().toISOString(),
   };
-  saveUserToRegistry(user);
+  localStorage.setItem(TOKEN_KEY, data.token);
   localStorage.setItem(AUTH_KEY, JSON.stringify(user));
   return user;
 }
 
-export function signup(name: string, email: string, _password: string): UserProfile {
+export async function signup(name: string, email: string, password: string): Promise<UserProfile> {
+  const res = await fetch(`${BASE_URL}/auth/signup`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ name, email, password }),
+  });
+
+  if (!res.ok) {
+    const body = await res.json().catch(() => ({ detail: 'Signup failed' }));
+    throw new Error(body.detail || 'Could not create account');
+  }
+
+  const data = await res.json();
   const user: UserProfile = {
-    id: crypto.randomUUID(),
-    name,
-    email,
+    id: data.user.id,
+    name: data.user.name,
+    email: data.user.email,
     createdAt: new Date().toISOString(),
   };
-  saveUserToRegistry(user);
+  localStorage.setItem(TOKEN_KEY, data.token);
   localStorage.setItem(AUTH_KEY, JSON.stringify(user));
   return user;
 }
 
 export function logout(): void {
   localStorage.removeItem(AUTH_KEY);
+  localStorage.removeItem(TOKEN_KEY);
 }
 
 export function updateProfile(updates: Partial<Pick<UserProfile, 'name' | 'email'>>): UserProfile | null {
@@ -62,22 +86,5 @@ export function updateProfile(updates: Partial<Pick<UserProfile, 'name' | 'email
   if (!user) return null;
   const updated = { ...user, ...updates };
   localStorage.setItem(AUTH_KEY, JSON.stringify(updated));
-  saveUserToRegistry(updated);
   return updated;
-}
-
-// Simple user registry for demo
-function getAllUsers(): UserProfile[] {
-  try {
-    const raw = localStorage.getItem('lps_user_registry');
-    return raw ? (JSON.parse(raw) as UserProfile[]) : [];
-  } catch {
-    return [];
-  }
-}
-
-function saveUserToRegistry(user: UserProfile): void {
-  const users = getAllUsers().filter(u => u.id !== user.id);
-  users.push(user);
-  localStorage.setItem('lps_user_registry', JSON.stringify(users));
 }

@@ -15,7 +15,6 @@ interface DailyResult {
   resilience: number;
   diversification: number;
   signalQuality: number;
-  fidelity: number;
   totalScore: number;
   streak: number;
 }
@@ -36,17 +35,16 @@ export default function DailyResultPage() {
   const arch = ARCHETYPES.find((a) => a.id === result.archetype);
 
   const scoreRows = [
-    { label: 'Return',            value: Math.round(result.portfolioReturn * 0.4), max: 40, desc: 'Portfolio performance from hidden scenario' },
-    { label: 'Resilience',        value: Math.round(result.resilience * 0.25),     max: 25, desc: 'How well your allocation handles stress' },
-    { label: 'Signal Filtering',  value: Math.round(result.signalQuality * 0.20),  max: 20, desc: 'Correctly identified signals vs noise' },
-    { label: 'Strategy Fidelity', value: Math.round(result.fidelity * 0.15),       max: 15, desc: 'Alignment with chosen archetype' },
+    { label: 'Return',            value: Math.round(result.portfolioReturn * 0.45), max: 45, desc: 'Portfolio performance from hidden scenario' },
+    { label: 'Resilience',        value: Math.round(result.resilience * 0.30),     max: 30, desc: 'How well your allocation handles stress' },
+    { label: 'Signal Filtering',  value: Math.round(result.signalQuality * 0.25),  max: 25, desc: 'Correctly identified signals vs noise' },
   ];
 
   return (
     <div className="max-w-4xl mx-auto px-4 py-8">
       {/* Header */}
       <div className="text-center mb-8">
-        <h1 className="text-3xl font-black text-white">📅 Daily Puzzle Result</h1>
+        <h1 className="text-3xl font-black text-white">Daily Puzzle Result</h1>
         <p className="text-arena-text-dim mt-1">{result.date} — {result.scenarioTitle}</p>
       </div>
 
@@ -99,12 +97,12 @@ export default function DailyResultPage() {
           {/* Quick Stats */}
           <div className="grid grid-cols-2 gap-3">
             <div className="bg-arena-surface border border-arena-border rounded-xl p-4">
-              <p className="text-xs text-arena-text-dim mb-1">Archetype</p>
-              <p className="text-sm font-bold text-white">{arch?.icon} {arch?.name ?? result.archetype}</p>
+              <p className="text-xs text-arena-text-dim mb-1">Profile</p>
+              <p className="text-sm font-bold text-white">{arch?.name ?? result.archetype}</p>
             </div>
             <div className="bg-arena-surface border border-arena-border rounded-xl p-4">
               <p className="text-xs text-arena-text-dim mb-1">Streak</p>
-              <p className="text-sm font-bold text-arena-gold">🔥 {result.streak} day{result.streak !== 1 ? 's' : ''}</p>
+              <p className="text-sm font-bold text-arena-gold">{result.streak} day{result.streak !== 1 ? 's' : ''}</p>
             </div>
             <div className="bg-arena-surface border border-arena-border rounded-xl p-4">
               <p className="text-xs text-arena-text-dim mb-1">Resilience</p>

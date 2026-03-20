@@ -5,14 +5,14 @@
  */
 
 const BASE_URL =
-  import.meta.env.VITE_API_BASE_URL?.replace(/\/+$/, '') ?? 'http://localhost:8000';
+  import.meta.env.VITE_API_BASE_URL?.replace(/\/+$/, '') ?? `http://${window.location.hostname}:8000`;
 
 // ── Types ──
 
 export interface MarketAsset {
   symbol: string;
   name: string;
-  category: string;       // "equities" | "bonds" | "fx" | "gold" | "crypto"
+  category: string;       // "equities" | "bonds" | "fx" | "gold"
   subcategory: string;    // "equity_indices" | "djia_stocks" | "smi_stocks" | "bonds" | "fx" | "gold"
   currency: string;
   numObservations: number;
@@ -47,13 +47,12 @@ export interface AssetCategory {
 // ── Subcategory display config ──
 
 const SUBCATEGORY_META: Record<string, { label: string; icon: string; order: number }> = {
-  equity_indices: { label: 'Equity Indices', icon: '📊', order: 1 },
-  djia_stocks:    { label: 'DJIA Stocks',    icon: '🇺🇸', order: 2 },
-  smi_stocks:     { label: 'SMI Stocks',     icon: '🇨🇭', order: 3 },
-  bonds:          { label: 'Bonds',          icon: '🏦', order: 4 },
-  gold:           { label: 'Gold',           icon: '🥇', order: 5 },
-  fx:             { label: 'FX',             icon: '💱', order: 6 },
-  crypto:         { label: 'Crypto',         icon: '₿',  order: 7 },
+  equity_indices: { label: 'Equity Indices', icon: '', order: 1 },
+  djia_stocks:    { label: 'DJIA Stocks',    icon: '', order: 2 },
+  smi_stocks:     { label: 'SMI Stocks',     icon: '', order: 3 },
+  bonds:          { label: 'Bonds',          icon: '', order: 4 },
+  gold:           { label: 'Gold',           icon: '', order: 5 },
+  fx:             { label: 'FX',             icon: '', order: 6 },
 };
 
 // ── Hardcoded fallback catalog (mirrors backend's 62 assets) ──
@@ -294,7 +293,7 @@ export function getAssetCategories(assets: MarketAsset[]): AssetCategory[] {
     .map(([key, items]) => ({
       key,
       label: SUBCATEGORY_META[key]?.label ?? key,
-      icon: SUBCATEGORY_META[key]?.icon ?? '📋',
+      icon: SUBCATEGORY_META[key]?.icon ?? '—',
       assets: items.sort((a, b) => a.symbol.localeCompare(b.symbol)),
     }))
     .sort((a, b) => {
@@ -343,7 +342,7 @@ export function getGameAwarePriceSeries(
   let price = baseSeries[baseSeries.length - 1].price;
   const lastHistDate = new Date(baseSeries[baseSeries.length - 1].date);
   const dailyVol = cal.stdDailyReturnPct / 100;
-  const DAYS_PER_ROUND = 25; // ~5 weeks of trading
+  const DAYS_PER_ROUND = 63; // ~1 quarter of trading per round
   const gamePoints: { date: string; price: number }[] = [];
 
   for (let round = 1; round <= completedRounds; round++) {
@@ -380,7 +379,6 @@ export function getCategoryColor(category: string): string {
     bonds: '#22c55e',
     gold: '#eab308',
     fx: '#a855f7',
-    crypto: '#f97316',
   };
   return colors[category] ?? '#6b7280';
 }
@@ -393,7 +391,6 @@ export function getSubcategoryColor(subcategory: string): string {
     bonds: '#22c55e',
     gold: '#eab308',
     fx: '#a855f7',
-    crypto: '#f97316',
   };
   return colors[subcategory] ?? '#6b7280';
 }

@@ -11,7 +11,7 @@ export default function HeadlineBundle({ headlines, selectedIds, onToggle, disab
   return (
     <div className="space-y-2">
       <div className="flex items-center justify-between mb-1">
-        <h3 className="text-sm font-semibold text-white">📰 Market Headlines</h3>
+        <h3 className="text-sm font-semibold text-white">Market Headlines</h3>
         <span className="text-xs text-arena-text-dim">
           {selectedIds.length} signal{selectedIds.length !== 1 ? 's' : ''} marked
         </span>
@@ -30,9 +30,16 @@ export default function HeadlineBundle({ headlines, selectedIds, onToggle, disab
             } ${disabled ? 'opacity-60 cursor-not-allowed' : 'cursor-pointer'}`}
           >
             <div className="flex items-start gap-2">
-              <span className="text-xs mt-0.5">
-                {h.category === 'macro' ? '🌐' : h.category === 'equity' ? '📈' : h.category === 'commodity' ? '🪙' : h.category === 'geopolitical' ? '🌍' : '📋'}
-              </span>
+              <span className={`w-2 h-2 rounded-full mt-2 shrink-0 ${
+                ['macro', 'market', 'earnings', 'analysis'].includes(h.category) ? 'bg-blue-400' :
+                ['policy', 'banking'].includes(h.category) ? 'bg-purple-400' :
+                ['gold', 'commodity', 'energy'].includes(h.category) ? 'bg-yellow-400' :
+                ['geopolitics', 'geopolitical'].includes(h.category) ? 'bg-red-400' :
+                ['fx'].includes(h.category) ? 'bg-cyan-400' :
+                ['bonds'].includes(h.category) ? 'bg-green-400' :
+                ['sentiment'].includes(h.category) ? 'bg-orange-400' :
+                'bg-white/30'
+              }`} />
               <div className="flex-1">
                 <p className="text-sm text-white font-medium leading-snug">{h.text}</p>
                 <p className="text-xs text-arena-text-dim mt-1">{h.detail}</p>

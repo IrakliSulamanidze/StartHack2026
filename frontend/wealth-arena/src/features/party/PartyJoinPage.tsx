@@ -1,36 +1,48 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/features/auth/AuthContext';
-import { load, save } from '@/services/persistence';
-import type { ClassroomRoom } from '@/shared/types/domain';
+import { save } from '@/services/persistence';
+import { joinRoom } from '@/services/partyApi';
 
-export default function ClassroomJoinPage() {
+export default function PartyJoinPage() {
   const { user } = useAuth();
   const navigate = useNavigate();
   const [code, setCode] = useState('');
   const [error, setError] = useState('');
+  const [joining, setJoining] = useState(false);
 
-  function handleJoin(e: React.FormEvent) {
+  async function handleJoin(e: React.FormEvent) {
     e.preventDefault();
     setError('');
-    const room = load<ClassroomRoom>('classroom_room');
-    if (room && room.roomCode === code.toUpperCase()) {
-      // Add player to room
-      const updated = {
-        ...room,
-        players: [...room.players, { id: user?.id ?? '', name: user?.name ?? 'Player', isHost: false }],
-      };
-      save('classroom_room', updated);
-      navigate('/classroom/lobby');
-    } else {
-      setError('Room not found. Check the code and try again.');
+    setJoining(true);
+    try {
+      const room = await joinRoom(code.toUpperCase());
+      save('party_room', {
+        roomCode: room.room_code,
+        roomName: room.room_name,
+        archetype: room.archetype,
+        objective: null,
+        timing: room.timing,
+        hostId: room.host_id,
+        players: room.players.map((p: { id: string; name: string; isHost: boolean }) => ({
+          id: p.id,
+          name: p.name,
+          isHost: p.isHost,
+        })),
+        started: room.started,
+      });
+      navigate('/party/lobby');
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Room not found. Check the code and try again.');
+    } finally {
+      setJoining(false);
     }
   }
 
   return (
     <div className="max-w-md mx-auto px-4 py-16">
       <div className="text-center mb-8">
-        <h1 className="text-3xl font-black text-white">🎮 Join a Room</h1>
+        <h1 className="text-3xl font-black text-white">Join a Room</h1>
         <p className="text-arena-text-dim mt-2">Enter the 6-character code from your host.</p>
       </div>
 
@@ -52,9 +64,10 @@ export default function ClassroomJoinPage() {
 
         <button
           type="submit"
-          className="w-full bg-arena-accent text-black font-bold py-3 rounded-lg hover:bg-arena-accent/90 transition-colors"
+          disabled={joining}
+          className="w-full bg-arena-accent text-black font-bold py-3 rounded-lg hover:bg-arena-accent/90 transition-colors disabled:opacity-50"
         >
-          Join Room
+          {joining ? 'Joining…' : 'Join Room'}
         </button>
       </form>
     </div>

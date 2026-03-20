@@ -1,70 +1,125 @@
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import type { GameState, AIMode } from '@/shared/types/domain';
+import type { GameState, PartyRoom } from '@/shared/types/domain';
 import { createGame, getRoundTemplate, advanceRound } from '@/services/gameAdapter';
 import { askGemini } from '@/services/gemini';
-import { load, save, remove, saveSandboxState } from '@/services/persistence';
-import { expandArchetypeAllocation } from '@/shared/types/domain';
+import { load, save } from '@/services/persistence';
+import { useAuth } from '@/features/auth/AuthContext';
 import HeadlineBundle from '@/shared/components/HeadlineBundle';
 import AllocationEditor from '@/shared/components/AllocationEditor';
 import AllocationDonutChart from '@/shared/components/AllocationDonutChart';
 import AIPanel from '@/shared/components/AIPanel';
 import RoundProgressBar from '@/shared/components/RoundProgressBar';
-import RebalanceModal from '@/shared/components/RebalanceModal';
+import { PartySocket } from '@/services/partyApi';
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 
-interface SandboxConfig {
-  archetype: string;
-  aiMode: string;
-}
+type RankEntry = { name: string; isYou: boolean; movement: number };
 
-export default function SandboxPlayPage() {
+export default function PartyPlayPage() {
   const navigate = useNavigate();
+  const { user } = useAuth();
   const [game, setGame] = useState<GameState | null>(null);
+  const [room, setRoom] = useState<PartyRoom | null>(null);
   const [selectedHeadlines, setSelectedHeadlines] = useState<string[]>([]);
   const [showRoundSummary, setShowRoundSummary] = useState(false);
-  const [showRebalanceModal, setShowRebalanceModal] = useState(false);
+  const [timeLeft, setTimeLeft] = useState(180);
+  const [roundRankings, setRoundRankings] = useState<RankEntry[]>([]);
+  const prevRankMapRef = useRef<Map<string, number>>(new Map());
+  const socketRef = useRef<PartySocket | null>(null);
 
-  // Initialize game from config
   useEffect(() => {
-    const config = load<SandboxConfig>('sandbox_config');
-    if (!config) {
-      navigate('/sandbox/setup');
+    const r = load<PartyRoom>('party_room');
+    if (!r) {
+      navigate('/party');
       return;
     }
-    const g = createGame(
-      'sandbox',
-      config.archetype as GameState['archetype'],
-      'balanced-growth',
-      config.aiMode as AIMode,
-    );
+    setRoom(r);
+    const g = createGame('party', r.archetype, 'balanced-growth', 'terminal');
     setGame(g);
-    save('active_game_round', g.currentRound);
   }, [navigate]);
+
+  // WebSocket connection
+  useEffect(() => {
+    if (!room) return;
+    const socket = new PartySocket(room.roomCode);
+    socketRef.current = socket;
+
+    socket.connect().catch(() => {
+      // If WS fails, game still works locally (no real-time rankings)
+    });
+
+    const unsub = socket.onMessage((msg) => {
+      if (msg.type === 'rankings') {
+        const newRankings: RankEntry[] = msg.rankings.map((r, idx) => {
+          const isYou = r.userId === String(user?.id ?? '');
+          const prevRank = prevRankMapRef.current.get(r.userId) ?? (idx + 1);
+          const movement = prevRank - (idx + 1);
+          return { name: r.name, isYou, movement };
+        });
+        const newRankMap = new Map<string, number>();
+        msg.rankings.forEach((r, idx) => newRankMap.set(r.userId, idx + 1));
+        prevRankMapRef.current = newRankMap;
+        setRoundRankings(newRankings);
+      }
+    });
+
+    return () => {
+      unsub();
+      socket.disconnect();
+      socketRef.current = null;
+    };
+  }, [room, user]);
+
+  // Timer
+  useEffect(() => {
+    if (!game || game.isComplete || showRoundSummary) return;
+    if (timeLeft <= 0) {
+      submitAction('keep');
+      return;
+    }
+    const timer = setTimeout(() => setTimeLeft((t) => t - 1), 1000);
+    return () => clearTimeout(timer);
+  }, [timeLeft, game, showRoundSummary]);
 
   function toggleHeadline(id: string) {
     setSelectedHeadlines((prev) => prev.includes(id) ? prev.filter((h) => h !== id) : [...prev, id]);
   }
 
-  function submitAction(action: 'keep' | 'rebalance' | 'custom') {
-    if (!game) return;
+  function submitAction(action: 'keep' | 'custom') {
+    if (!game || !room) return;
     const alloc = action === 'custom' ? game.allocation : null;
     const next = advanceRound(game, action, alloc, selectedHeadlines);
     setGame(next);
     setSelectedHeadlines([]);
 
+    const playerReturn = ((next.portfolioValue - next.initialCapital) / next.initialCapital) * 100;
+    const completedRound = next.roundHistory[next.roundHistory.length - 1]?.round ?? 1;
+
+    // Send round data to backend via WebSocket
     if (next.isComplete) {
-      saveSandboxState(next);
-      remove('active_game_round');
-      navigate('/sandbox/result');
+      socketRef.current?.sendGameComplete(next.portfolioValue, playerReturn, completedRound);
+      socketRef.current?.requestRankings();
+      // Wait briefly for rankings to arrive, then navigate
+      setTimeout(() => {
+        save('party_result', next);
+        save('party_final_rankings', roundRankings);
+        navigate('/party/result');
+      }, 800);
     } else {
-      save('active_game_round', next.currentRound);
+      socketRef.current?.sendRoundComplete(completedRound, next.portfolioValue, playerReturn, action, next.allocation);
+      socketRef.current?.requestRankings();
+      // Show summary immediately — rankings will update via WS callback
+      // Set a basic "you" entry as placeholder until real rankings arrive
+      if (roundRankings.length === 0) {
+        setRoundRankings([{ name: user?.name ?? 'You', isYou: true, movement: 0 }]);
+      }
       setShowRoundSummary(true);
     }
   }
 
   function dismissSummary() {
     setShowRoundSummary(false);
+    setTimeLeft(120);
   }
 
   const handleAllocationChange = useCallback((asset: string, value: number) => {
@@ -74,7 +129,7 @@ export default function SandboxPlayPage() {
   const handleAIAsk = useCallback((question: string): Promise<string> => {
     if (!game) return Promise.resolve('');
     const t = getRoundTemplate(game.currentRound);
-    return askGemini(game.aiMode, game.currentRound, question, {
+    return askGemini('terminal', game.currentRound, question, {
       portfolioValue: game.portfolioValue,
       allocation: game.allocation,
       archetype: game.archetype,
@@ -82,30 +137,14 @@ export default function SandboxPlayPage() {
       scenarioDescription: t.description,
       headlines: t.headlines,
       selectedHeadlines,
-      gameMode: 'sandbox',
+      gameMode: 'party',
     });
   }, [game, selectedHeadlines]);
-
-  function handleRebalanceConfirm(categoryAlloc: Record<string, number>) {
-    if (!game) return;
-    const instrumentAlloc = expandArchetypeAllocation(categoryAlloc);
-    const next = advanceRound(game, 'rebalance', instrumentAlloc, selectedHeadlines);
-    setGame(next);
-    setSelectedHeadlines([]);
-    setShowRebalanceModal(false);
-
-    if (next.isComplete) {
-      saveSandboxState(next);
-      navigate('/sandbox/result');
-    } else {
-      setShowRoundSummary(true);
-    }
-  }
 
   if (!game) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="text-arena-text-dim animate-pulse">Loading game…</div>
+        <div className="text-arena-text-dim animate-pulse">Loading party game…</div>
       </div>
     );
   }
@@ -121,7 +160,7 @@ export default function SandboxPlayPage() {
     ...game.roundHistory.map((r) => ({
       round: r.round,
       portfolio: Math.round(r.portfolioValueAfter),
-      benchmark: Math.round(game.initialCapital * (1 + 0.005 * r.round)), // simple mock benchmark
+      benchmark: Math.round(game.initialCapital * (1 + 0.005 * r.round)),
     })),
   ];
 
@@ -132,17 +171,32 @@ export default function SandboxPlayPage() {
         <div className="fixed inset-0 pointer-events-none z-40 bg-red-900/20 border-4 border-red-500/40 animate-pulse" />
       )}
 
-      {/* Progress Bar */}
-      <RoundProgressBar
-        current={game.currentRound}
-        total={game.totalRounds}
-        titles={Array.from({ length: 10 }, (_, i) => getRoundTemplate(i + 1).title)}
-      />
+      {/* Progress Bar + Timer */}
+      <div className="flex items-center gap-4">
+        <div className="flex-1">
+          <RoundProgressBar
+            current={game.currentRound}
+            total={game.totalRounds}
+            titles={Array.from({ length: 10 }, (_, i) => getRoundTemplate(i + 1).title)}
+          />
+        </div>
+        <div className={`text-2xl font-mono font-bold shrink-0 ${timeLeft <= 30 ? 'text-arena-danger animate-pulse' : 'text-white'}`}>
+          {Math.floor(timeLeft / 60)}:{(timeLeft % 60).toString().padStart(2, '0')}
+        </div>
+      </div>
+
+      {/* Room badge */}
+      {room && (
+        <div className="mt-2 flex items-center gap-2 text-xs text-arena-text-dim">
+          <span className="px-2 py-0.5 bg-purple-500/15 text-purple-400 rounded-full font-mono font-bold">{room.roomCode}</span>
+          <span>{room.roomName}</span>
+        </div>
+      )}
 
       {/* Round Summary Overlay */}
       {showRoundSummary && lastRound && (
         <div className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4">
-          <div className="bg-arena-surface border border-arena-border rounded-2xl p-8 max-w-md w-full">
+          <div className="bg-arena-surface border border-arena-border rounded-2xl p-8 max-w-lg w-full">
             <h2 className="text-xl font-bold text-white mb-2">Round {lastRound.round} Complete</h2>
             <div className="space-y-3 mb-6">
               <div className="flex justify-between">
@@ -159,8 +213,39 @@ export default function SandboxPlayPage() {
                 <span className="text-arena-text-dim">Portfolio Value</span>
                 <span className="text-white font-mono">${lastRound.portfolioValueAfter.toLocaleString(undefined, { maximumFractionDigits: 0 })}</span>
               </div>
-
             </div>
+
+            {/* Rankings */}
+            {roundRankings.length > 0 && (
+              <div className="mb-6">
+                <h3 className="text-sm font-bold text-arena-text-dim uppercase tracking-wider mb-3">Current Standings</h3>
+                <div className="space-y-1.5">
+                  {roundRankings.map((entry, idx) => {
+                    const rank = idx + 1;
+                    const medal = rank === 1 ? '🥇' : rank === 2 ? '🥈' : rank === 3 ? '🥉' : `#${rank}`;
+                    const movementIcon = entry.movement > 0 ? '▲' : entry.movement < 0 ? '▼' : '—';
+                    const movementColor = entry.movement > 0 ? 'text-arena-accent' : entry.movement < 0 ? 'text-arena-danger' : 'text-arena-text-dim';
+                    return (
+                      <div
+                        key={idx}
+                        className={`flex items-center gap-3 px-3 py-2 rounded-lg ${
+                          entry.isYou ? 'bg-arena-accent/10 border border-arena-accent/30' : 'bg-white/[0.03]'
+                        }`}
+                      >
+                        <span className="w-8 text-center font-bold text-white">{medal}</span>
+                        <span className={`flex-1 font-medium ${entry.isYou ? 'text-arena-accent' : 'text-white'}`}>
+                          {entry.name} {entry.isYou && <span className="text-xs opacity-60">(you)</span>}
+                        </span>
+                        <span className={`text-xs font-mono font-bold ${movementColor}`}>
+                          {movementIcon} {entry.movement !== 0 && Math.abs(entry.movement)}
+                        </span>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+
             <button
               onClick={dismissSummary}
               className="w-full bg-arena-accent text-black font-bold py-2.5 rounded-lg hover:bg-arena-accent/90 transition-colors"
@@ -171,7 +256,7 @@ export default function SandboxPlayPage() {
         </div>
       )}
 
-      {/* Main Game Layout */}
+      {/* Main Game Layout — same 3-col as Sandbox */}
       <div className="mt-4 grid lg:grid-cols-[280px_1fr_280px] gap-4">
         {/* Left Panel: Stats */}
         <div className="space-y-4">
@@ -222,19 +307,13 @@ export default function SandboxPlayPage() {
             currentRound={game.currentRound}
           />
 
-          {/* Action Buttons */}
+          {/* Action Buttons — Keep + Submit only (no rebalance in competition) */}
           <div className="flex gap-3">
             <button
               onClick={() => submitAction('keep')}
               className="flex-1 bg-arena-surface border border-arena-border text-white font-semibold py-3 rounded-lg hover:bg-white/5 transition-colors"
             >
               Keep Current
-            </button>
-            <button
-              onClick={() => setShowRebalanceModal(true)}
-              className="flex-1 bg-arena-surface border border-arena-accent/30 text-arena-accent font-semibold py-3 rounded-lg hover:bg-arena-accent/10 transition-colors"
-            >
-              Rebalance
             </button>
             <button
               onClick={() => submitAction('custom')}
@@ -245,23 +324,11 @@ export default function SandboxPlayPage() {
           </div>
         </div>
 
-        {/* Right: AI Panel */}
+        {/* Right: AI Helper */}
         <div className="h-[650px]">
-          <AIPanel mode={game.aiMode} onAsk={handleAIAsk} />
+          <AIPanel mode="terminal" onAsk={handleAIAsk} />
         </div>
       </div>
-
-      {showRebalanceModal && (
-        <RebalanceModal
-          archetype={game.archetype}
-          currentAllocation={game.allocation}
-          round={game.currentRound}
-          scenario={`${template.title} — ${template.description}`}
-          headlines={template.headlines.map((h) => h.text)}
-          onConfirm={handleRebalanceConfirm}
-          onCancel={() => setShowRebalanceModal(false)}
-        />
-      )}
     </div>
   );
 }

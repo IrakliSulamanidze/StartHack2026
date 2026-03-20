@@ -62,7 +62,7 @@ export default function MarketsPage() {
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="text-2xl font-black text-white flex items-center gap-3">
-            <span className="text-3xl">📊</span> Markets
+            Markets
           </h1>
           <p className="text-sm text-arena-text-dim mt-1">
             Browse {categories.reduce((s, c) => s + c.assets.length, 0)} instruments across {categories.length} categories
@@ -102,10 +102,10 @@ export default function MarketsPage() {
               >
                 <div className="flex items-center gap-3">
                   <div
-                    className="w-9 h-9 rounded-lg flex items-center justify-center text-lg"
+                    className="w-9 h-9 rounded-lg flex items-center justify-center"
                     style={{ backgroundColor: `${catColor}20` }}
                   >
-                    {cat.icon}
+                    <span className="w-3 h-3 rounded-full" style={{ backgroundColor: catColor }} />
                   </div>
                   <div className="text-left">
                     <h2 className="text-sm font-bold text-white">{cat.label}</h2>

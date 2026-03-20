@@ -1,6 +1,6 @@
 import { useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ARCHETYPES, OBJECTIVES } from '@/shared/types/domain';
+import { ARCHETYPES } from '@/shared/types/domain';
 import type { ArchetypeId, AIMode } from '@/shared/types/domain';
 import { getRoundTemplate } from '@/services/gameAdapter';
 import { askGemini } from '@/services/gemini';
@@ -23,7 +23,7 @@ function getDailyRoundIndex(): number {
 
 // Hidden next-year impacts for scoring the single allocation
 const DAILY_IMPACTS: Record<string, number> = {
-  equities: 3.2, bonds: 0.8, gold: 2.5, fx: -0.4, crypto: -5.8,
+  equities: 3.2, bonds: 0.8, gold: 2.5, fx: -0.4,
 };
 
 export default function DailyPage() {
@@ -31,7 +31,6 @@ export default function DailyPage() {
   const todayStr = new Date().toISOString().slice(0, 10);
   const roundIdx = getDailyRoundIndex();
   const template = getRoundTemplate(roundIdx);
-  const objective = OBJECTIVES.find((o) => o.id === 'balanced-growth')!;
   const aiMode: AIMode = 'terminal';
 
   const [archetype, setArchetype] = useState<ArchetypeId>('balanced-core');
@@ -79,14 +78,12 @@ export default function DailyPage() {
     const finalValue = initialCapital * (1 + portfolioReturn / 100);
 
     // Compute simple score
-    const drift = computeDrift(allocation, archetype);
-    const fidelity = Math.max(0, 100 - drift * 2);
     const resilience = Math.max(0, Math.min(100, 50 + portfolioReturn * 5));
     const diversification = computeDiversification(allocation);
     const signalQuality = computeSignalScore(selectedHeadlines, template.headlines);
 
     const totalScore = Math.round(
-      portfolioReturn * 0.4 + resilience * 0.25 + signalQuality * 0.20 + fidelity * 0.15
+      portfolioReturn * 0.45 + resilience * 0.30 + signalQuality * 0.25
     );
 
     // Update streak
@@ -105,7 +102,6 @@ export default function DailyPage() {
       resilience: Math.round(resilience),
       diversification: Math.round(diversification),
       signalQuality: Math.round(signalQuality),
-      fidelity: Math.round(fidelity),
       totalScore: Math.max(0, Math.min(100, totalScore)),
       streak: streak + 1,
     });
@@ -133,13 +129,13 @@ export default function DailyPage() {
       {/* Header */}
       <div className="mb-6">
         <div className="flex items-center gap-4 mb-2">
-          <h1 className="text-2xl font-black text-white">📅 Daily Puzzle</h1>
+          <h1 className="text-2xl font-black text-white">Daily Puzzle</h1>
           <span className="px-3 py-1 bg-arena-accent/15 text-arena-accent text-xs font-bold rounded-full">
             {todayStr}
           </span>
           {streak > 0 && (
             <span className="px-3 py-1 bg-arena-gold/15 text-arena-gold text-xs font-bold rounded-full">
-              🔥 {streak} day streak
+              {streak} day streak
             </span>
           )}
         </div>
@@ -158,20 +154,10 @@ export default function DailyPage() {
             <p className="text-xs text-arena-text-dim mt-1">{template.description}</p>
           </div>
 
-          {/* Objective */}
-          <div className="bg-arena-surface border border-arena-border rounded-xl p-4">
-            <h3 className="text-xs font-semibold text-arena-text-dim mb-2 uppercase tracking-wider">Objective</h3>
-            <div className="flex items-center gap-2">
-              <span className="text-lg">{objective.icon}</span>
-              <span className="text-sm text-white font-medium">{objective.name}</span>
-            </div>
-            <p className="text-xs text-arena-text-dim mt-1">{objective.description}</p>
-          </div>
-
           {/* Archetype selector */}
           <div className="bg-arena-surface border border-arena-border rounded-xl p-4">
             <h3 className="text-xs font-semibold text-arena-text-dim mb-3 uppercase tracking-wider">
-              Target Archetype
+              Investor Profile
             </h3>
             <div className="space-y-2">
               {ARCHETYPES.map((a) => (
@@ -221,7 +207,7 @@ export default function DailyPage() {
               onClick={() => setAllocation(expandArchetypeAllocation(getArchetype(archetype).allocation))}
               className="flex-1 bg-arena-surface border border-arena-accent/30 text-arena-accent font-semibold py-2.5 rounded-lg hover:bg-arena-accent/10 transition-colors"
             >
-              Fill Archetype Template
+              Fill Profile Template
             </button>
             <button
               onClick={handleSubmit}
@@ -243,22 +229,6 @@ export default function DailyPage() {
 }
 
 // ── Helpers ──
-
-function computeDrift(alloc: Record<string, number>, archetypeId: ArchetypeId): number {
-  const arch = getArchetype(archetypeId);
-  // Aggregate instrument allocation to category level
-  const catAlloc: Record<string, number> = {};
-  for (const [symbol, weight] of Object.entries(alloc)) {
-    const cat = INSTRUMENT_CATEGORY[symbol] ?? symbol;
-    catAlloc[cat] = (catAlloc[cat] ?? 0) + weight;
-  }
-  const allCats = new Set([...Object.keys(catAlloc), ...Object.keys(arch.allocation)]);
-  let totalDiff = 0;
-  for (const cat of allCats) {
-    totalDiff += Math.abs((catAlloc[cat] ?? 0) - (arch.allocation[cat] ?? 0));
-  }
-  return Math.round(totalDiff / 2);
-}
 
 function computeDiversification(alloc: Record<string, number>): number {
   const nonZero = Object.values(alloc).filter((v) => v > 0);

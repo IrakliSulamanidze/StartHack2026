@@ -13,7 +13,7 @@ import type {
   BackendCalibrationStats,
 } from '@/shared/types/backend';
 
-const BASE_URL = import.meta.env.VITE_API_BASE_URL?.replace(/\/+$/, '') ?? 'http://localhost:8000';
+const BASE_URL = import.meta.env.VITE_API_BASE_URL?.replace(/\/+$/, '') ?? `http://${window.location.hostname}:8000`;
 
 class ApiError extends Error {
   status: number;

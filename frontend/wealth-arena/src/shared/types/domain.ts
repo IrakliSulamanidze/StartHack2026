@@ -1,11 +1,11 @@
 /**
- * Domain types for Last Portfolio Standing.
+ * Domain types for Endgame Securities.
  * Core game concepts: archetypes, objectives, rounds, headlines, game state.
  */
 
 // ── Archetypes ──
 
-export type ArchetypeId = 'fortress' | 'balanced-core' | 'tactician' | 'hunter';
+export type ArchetypeId = 'fortress' | 'balanced-core' | 'growth-builder';
 
 export interface Archetype {
   id: ArchetypeId;
@@ -23,45 +23,34 @@ export const ARCHETYPES: Archetype[] = [
   {
     id: 'fortress',
     name: 'Fortress',
-    icon: '🏰',
-    tagline: 'Defend first. Grow later.',
-    description: 'A defensive, capital-preservation strategy. High bonds, some gold, low equities. Built to lose less in shocks and accepts lower upside.',
-    strengths: ['Minimal drawdowns in crashes', 'Steady income from bonds', 'Sleeps well at night'],
-    weaknesses: ['Misses big equity rallies', 'Inflation erodes real returns', 'Slow compounding over decades'],
+    icon: '',
+    tagline: 'Protect first. Grow steady.',
+    description: 'A conservative, capital-preservation strategy. High bonds, some gold, low equities. Built to protect your money during market shocks and keep drawdowns small.',
+    strengths: ['Smallest losses in market crashes', 'Steady income from bonds', 'Low stress — designed for peace of mind'],
+    weaknesses: ['Misses out when markets rally', 'Inflation can reduce real value over time', 'Slower long-term growth'],
     allocation: { bonds: 50, gold: 20, equities: 20, fx: 10 },
     color: '#3b82f6',
   },
   {
     id: 'balanced-core',
     name: 'Balanced Core',
-    icon: '⚖️',
-    tagline: 'The classic. Diversified. Resilient.',
-    description: 'A classic diversified long-term investor. Equities plus bonds plus a small gold allocation. Built for steady growth across all market regimes.',
-    strengths: ['Works in most environments', 'Natural diversification', 'Time-tested approach'],
-    weaknesses: ['Never the top performer', 'Moderate drawdowns still happen', 'Requires patience'],
+    icon: '',
+    tagline: 'The classic. Diversified. Recommended.',
+    description: 'The most popular starting point for long-term investors. A diversified mix of equities and bonds with some gold for stability. Built for steady growth through all market conditions.',
+    strengths: ['Works in most market environments', 'Natural diversification across assets', 'Time-tested and beginner-friendly'],
+    weaknesses: ['Never the top performer in any single year', 'Moderate losses can still happen', 'Requires patience over many years'],
     allocation: { equities: 45, bonds: 35, gold: 10, fx: 10 },
     color: '#22c55e',
   },
   {
-    id: 'tactician',
-    name: 'Tactician',
-    icon: '🎯',
-    tagline: 'Read the field. Adapt. Execute.',
-    description: 'A flexible diversified investor with a balanced base and more room to rebalance. Built to adapt to changing conditions without becoming extreme.',
-    strengths: ['Flexibility to shift exposure', 'Can exploit mispricings', 'Balanced risk/reward'],
-    weaknesses: ['Requires active decisions', 'Overtrading risk', 'Analysis paralysis possible'],
-    allocation: { equities: 35, bonds: 25, gold: 15, fx: 15, crypto: 10 },
-    color: '#eab308',
-  },
-  {
-    id: 'hunter',
-    name: 'Hunter',
-    icon: '🦅',
-    tagline: 'Chase growth. Accept the bruises.',
-    description: 'A growth-seeking investor with high equities, low bonds, and little defense. Built to capture upside but vulnerable under stress.',
-    strengths: ['Highest long-run returns potential', 'Captures bull markets fully', 'Compounding power'],
-    weaknesses: ['Deep drawdowns in crashes', 'Needs strong conviction', 'Painful in prolonged bears'],
-    allocation: { equities: 65, bonds: 10, gold: 5, crypto: 15, fx: 5 },
+    id: 'growth-builder',
+    name: 'Growth Builder',
+    icon: '',
+    tagline: 'Build wealth. Stay diversified.',
+    description: 'A higher-equity strategy for investors who accept more volatility in exchange for stronger long-term growth. Still diversified — not speculative. Built for patient investors with a long time horizon.',
+    strengths: ['Strongest long-term growth potential', 'Benefits most from compound returns', 'Captures equity market upside'],
+    weaknesses: ['Larger drops during market downturns', 'Requires discipline to stay the course', 'Short-term swings can feel uncomfortable'],
+    allocation: { equities: 65, bonds: 20, gold: 10, fx: 5 },
     color: '#f97316',
   },
 ];
@@ -88,12 +77,12 @@ export interface MissionObjective {
 }
 
 export const OBJECTIVES: MissionObjective[] = [
-  { id: 'balanced-growth', name: 'Balanced Growth', description: 'Grow steadily without excessive risk.', icon: '📈' },
-  { id: 'max-resilience', name: 'Maximum Resilience', description: 'Survive all shocks with minimal damage.', icon: '🛡️' },
-  { id: 'outperform-benchmark', name: 'Outperform Benchmark', description: 'Beat the market reference portfolio.', icon: '🏆' },
-  { id: 'capital-preservation', name: 'Capital Preservation', description: 'Protect your starting capital at all costs.', icon: '🔒' },
-  { id: 'inflation-survival', name: 'Inflation Survival', description: 'Maintain purchasing power against inflation.', icon: '🔥' },
-  { id: 'shock-resistance', name: 'Shock Resistance', description: 'Withstand the worst market events.', icon: '⚡' },
+  { id: 'balanced-growth', name: 'Balanced Growth', description: 'Grow steadily without excessive risk.', icon: '' },
+  { id: 'max-resilience', name: 'Maximum Resilience', description: 'Survive all shocks with minimal damage.', icon: '' },
+  { id: 'outperform-benchmark', name: 'Outperform Benchmark', description: 'Beat the market reference portfolio.', icon: '' },
+  { id: 'capital-preservation', name: 'Capital Preservation', description: 'Protect your starting capital at all costs.', icon: '' },
+  { id: 'inflation-survival', name: 'Inflation Survival', description: 'Maintain purchasing power against inflation.', icon: '' },
+  { id: 'shock-resistance', name: 'Shock Resistance', description: 'Withstand the worst market events.', icon: '' },
 ];
 
 // ── AI Mode ──
@@ -101,9 +90,9 @@ export const OBJECTIVES: MissionObjective[] = [
 export type AIMode = 'coach' | 'assistant' | 'terminal';
 
 export const AI_MODES: { id: AIMode; name: string; description: string; icon: string }[] = [
-  { id: 'coach', name: 'Coach', description: 'Filters headlines, explains archetype fit, educational suggestions.', icon: '🎓' },
-  { id: 'assistant', name: 'Assistant', description: 'Summarizes & clusters headlines. You must ask for inference.', icon: '🤖' },
-  { id: 'terminal', name: 'Terminal', description: 'Raw headlines, raw exposure, concise implications only.', icon: '💻' },
+  { id: 'coach', name: 'Coach', description: 'Filters headlines, explains archetype fit, educational suggestions.', icon: '' },
+  { id: 'assistant', name: 'Assistant', description: 'Summarizes & clusters headlines. You must ask for inference.', icon: '' },
+  { id: 'terminal', name: 'AI Helper', description: 'A straightforward AI assistant. Ask anything, get helpful answers.', icon: '' },
 ];
 
 // ── Round Actions ──
@@ -148,7 +137,7 @@ export interface RoundResult {
 
 export interface GameState {
   scenarioId: string;
-  mode: 'daily' | 'sandbox' | 'classroom';
+  mode: 'daily' | 'sandbox' | 'party';
   archetype: ArchetypeId;
   objective: ObjectiveId;
   aiMode: AIMode;
@@ -181,13 +170,13 @@ export const BEHAVIOR_LABELS = [
   'FOMO Chaser',
   'Adaptive Survivor',
   'Fortress Master',
-
+  'Growth Builder',
   'Steady Hand',
   'Momentum Rider',
   'Overexposed',
 ] as const;
 
-// ── Classroom ──
+// ── Party ──
 
 export type TimingPreset = 'fast' | 'standard' | 'extended';
 
@@ -197,7 +186,7 @@ export const TIMING_PRESETS: Record<TimingPreset, { round1: number; laterRounds:
   extended: { round1: 300, laterRounds: 180, label: 'Extended' },
 };
 
-export interface ClassroomRoom {
+export interface PartyRoom {
   roomCode: string;
   roomName: string;
   archetype: ArchetypeId;
@@ -210,14 +199,13 @@ export interface ClassroomRoom {
 
 // ── Asset display helpers ──
 
-export const ASSET_CLASSES = ['equities', 'bonds', 'gold', 'fx', 'crypto'] as const;
+export const ASSET_CLASSES = ['equities', 'bonds', 'gold', 'fx'] as const;
 
 export const ASSET_META: Record<string, { name: string; icon: string; color: string }> = {
-  equities: { name: 'Equities', icon: '📈', color: '#3b82f6' },
-  bonds: { name: 'Bonds', icon: '🏦', color: '#22c55e' },
-  gold: { name: 'Gold', icon: '🥇', color: '#eab308' },
-  fx: { name: 'FX', icon: '💱', color: '#a855f7' },
-  crypto: { name: 'Crypto', icon: '₿', color: '#f97316' },
+  equities: { name: 'Equities', icon: '', color: '#3b82f6' },
+  bonds: { name: 'Bonds', icon: '', color: '#22c55e' },
+  gold: { name: 'Gold', icon: '', color: '#eab308' },
+  fx: { name: 'FX', icon: '', color: '#a855f7' },
 };
 
 // ── Per-instrument allocation system ──
@@ -238,7 +226,7 @@ export interface AllocationCategory {
 
 export const ALLOCATION_CATEGORIES: AllocationCategory[] = [
   {
-    key: 'equity_indices', label: 'Equity Indices', icon: '📊', color: '#3b82f6',
+    key: 'equity_indices', label: 'Equity Indices', icon: '', color: '#3b82f6',
     scoringCategory: 'equities',
     instruments: [
       { symbol: 'SMI', name: 'Swiss Market Index' },
@@ -249,7 +237,7 @@ export const ALLOCATION_CATEGORIES: AllocationCategory[] = [
     ],
   },
   {
-    key: 'djia_stocks', label: 'US Stocks', icon: '🇺🇸', color: '#60a5fa',
+    key: 'djia_stocks', label: 'US Stocks', icon: '', color: '#60a5fa',
     scoringCategory: 'equities',
     instruments: [
       { symbol: 'AAPL-US', name: 'Apple' },
@@ -275,7 +263,7 @@ export const ALLOCATION_CATEGORIES: AllocationCategory[] = [
     ],
   },
   {
-    key: 'smi_stocks', label: 'Swiss Stocks', icon: '🇨🇭', color: '#818cf8',
+    key: 'smi_stocks', label: 'Swiss Stocks', icon: '', color: '#818cf8',
     scoringCategory: 'equities',
     instruments: [
       { symbol: 'NESN-CH', name: 'Nestlé' },
@@ -291,7 +279,7 @@ export const ALLOCATION_CATEGORIES: AllocationCategory[] = [
     ],
   },
   {
-    key: 'bonds', label: 'Bonds', icon: '🏦', color: '#22c55e',
+    key: 'bonds', label: 'Bonds', icon: '', color: '#22c55e',
     scoringCategory: 'bonds',
     instruments: [
       { symbol: 'CH-BOND-TR', name: 'Swiss Bond AAA-BBB' },
@@ -300,7 +288,7 @@ export const ALLOCATION_CATEGORIES: AllocationCategory[] = [
     ],
   },
   {
-    key: 'gold', label: 'Gold', icon: '🥇', color: '#eab308',
+    key: 'gold', label: 'Gold', icon: '', color: '#eab308',
     scoringCategory: 'gold',
     instruments: [
       { symbol: 'GOLD-USD', name: 'Gold (USD)' },
@@ -308,7 +296,7 @@ export const ALLOCATION_CATEGORIES: AllocationCategory[] = [
     ],
   },
   {
-    key: 'fx', label: 'Foreign Exchange', icon: '💱', color: '#a855f7',
+    key: 'fx', label: 'Foreign Exchange', icon: '', color: '#a855f7',
     scoringCategory: 'fx',
     instruments: [
       { symbol: 'USDCHF', name: 'USD/CHF' },
@@ -347,10 +335,9 @@ const DEFAULT_INSTRUMENTS: Record<string, string[]> = {
   bonds: ['CH-BOND-TR', 'GLOBAL-AGG-TR-CHF'],
   gold: ['GOLD-USD'],
   fx: ['USDCHF', 'EURCHF'],
-  crypto: [], // no crypto instruments in catalog
 };
 
-/** Expand an abstract archetype allocation (equities/bonds/gold/fx/crypto)
+/** Expand an abstract archetype allocation (equities/bonds/gold/fx)
  *  into individual instrument allocations that sum to 100. */
 export function expandArchetypeAllocation(abstract: Record<string, number>): Record<string, number> {
   const result: Record<string, number> = {};
@@ -370,7 +357,7 @@ export function expandArchetypeAllocation(abstract: Record<string, number>): Rec
     }
   }
 
-  // Redistribute unassigned weight (e.g. crypto with no instruments) to equities
+  // Redistribute unassigned weight to equities
   if (remaining > 0) {
     const eqInst = DEFAULT_INSTRUMENTS.equities;
     const per = Math.floor(remaining / eqInst.length);

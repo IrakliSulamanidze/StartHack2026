@@ -1,14 +1,17 @@
 import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from 'recharts';
+import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, ReferenceLine } from 'recharts';
 import {
   fetchMarketAssets,
   fetchCalibration,
   getAssetPriceSeries,
+  getGameAwarePriceSeries,
   getCategoryColor,
   type MarketAsset,
   type AssetCalibration,
 } from '@/services/marketData';
+import { ROUND_IMPACTS } from '@/services/gameAdapter';
+import { load } from '@/services/persistence';
 
 export default function AssetDetailPage() {
   const { assetId } = useParams<{ assetId: string }>();
@@ -16,10 +19,11 @@ export default function AssetDetailPage() {
   const [cal, setCal] = useState<AssetCalibration | null>(null);
   const [series, setSeries] = useState<{ date: string; price: number }[]>([]);
   const [loading, setLoading] = useState(true);
+  const activeRound = load<number>('active_game_round') ?? 0;
 
   useEffect(() => {
     if (!assetId) return;
-    async function load() {
+    async function load_() {
       const [assets, calibration] = await Promise.all([
         fetchMarketAssets(),
         fetchCalibration(assetId!),
@@ -28,12 +32,16 @@ export default function AssetDetailPage() {
       setAsset(found ?? null);
       setCal(calibration);
       if (calibration) {
-        setSeries(getAssetPriceSeries(calibration));
+        setSeries(
+          activeRound > 1
+            ? getGameAwarePriceSeries(calibration, activeRound, ROUND_IMPACTS)
+            : getAssetPriceSeries(calibration)
+        );
       }
       setLoading(false);
     }
-    load();
-  }, [assetId]);
+    load_();
+  }, [assetId, activeRound]);
 
   if (loading) {
     return (
@@ -68,6 +76,10 @@ export default function AssetDetailPage() {
   // Sample series for chart (keep every Nth point)
   const step = Math.max(1, Math.floor(series.length / 300));
   const chartData = series.filter((_, i) => i % step === 0 || i === series.length - 1);
+
+  // Find boundary between historical and game data
+  const baseSeries = activeRound > 1 && cal ? getAssetPriceSeries(cal) : [];
+  const gameStartDate = baseSeries.length > 0 ? baseSeries[baseSeries.length - 1].date : null;
 
   return (
     <div className="max-w-6xl mx-auto px-4 lg:px-8 py-8">
@@ -116,7 +128,14 @@ export default function AssetDetailPage() {
       {chartData.length > 0 && (
         <div className="bg-arena-surface border border-arena-border rounded-xl p-5 mb-6">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-sm font-bold text-white">5-Year Price Chart</h2>
+            <div>
+              <h2 className="text-sm font-bold text-white">
+                {activeRound > 1 ? 'Price Chart (incl. Game Data)' : '5-Year Price Chart'}
+              </h2>
+              {activeRound > 1 && (
+                <p className="text-[10px] text-arena-accent mt-0.5">Includes game data through round {activeRound - 1}</p>
+              )}
+            </div>
             <span className={`text-sm font-mono ${fiveYrReturn >= 0 ? 'text-arena-accent' : 'text-arena-danger'}`}>
               {fiveYrReturn >= 0 ? '+' : ''}{fiveYrReturn.toFixed(2)}%
             </span>
@@ -158,6 +177,14 @@ export default function AssetDetailPage() {
                 dot={false}
                 activeDot={{ r: 3, fill: color }}
               />
+              {gameStartDate && (
+                <ReferenceLine
+                  x={gameStartDate}
+                  stroke="#eab308"
+                  strokeDasharray="4 4"
+                  label={{ value: 'Game Start', position: 'top', fill: '#eab308', fontSize: 9 }}
+                />
+              )}
             </LineChart>
           </ResponsiveContainer>
         </div>

@@ -1,21 +1,47 @@
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { loadSandboxState } from '@/services/persistence';
+import { load } from '@/services/persistence';
 import { getRoundTemplate } from '@/services/gameAdapter';
-import type { GameState } from '@/shared/types/domain';
+import type { GameState, PartyRoom } from '@/shared/types/domain';
 import { getArchetype } from '@/shared/types/domain';
 import AIGradeCard from '@/shared/components/AIGradeCard';
 import AllocationDonutChart from '@/shared/components/AllocationDonutChart';
+import { getRankings } from '@/services/partyApi';
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, BarChart, Bar, Cell } from 'recharts';
 
-export default function SandboxResultPage() {
-  const state = loadSandboxState<GameState>();
+export default function PartyResultPage() {
+  const state = load<GameState>('party_result');
+  const room = load<PartyRoom>('party_room');
+  const savedRankings = load<{ name: string; isYou: boolean; movement: number }[]>('party_final_rankings');
+
+  // Fetch real rankings from backend
+  type LeaderboardEntry = { name: string; rank: number; isYou: boolean };
+  const [leaderboard, setLeaderboard] = useState<LeaderboardEntry[]>([]);
+
+  useEffect(() => {
+    if (!room) return;
+    getRankings(room.roomCode)
+      .then((data) => {
+        setLeaderboard(data.map((r, i) => ({
+          name: r.name,
+          rank: r.rank ?? i + 1,
+          isYou: savedRankings?.find((s) => s.isYou)?.name === r.name || false,
+        })));
+      })
+      .catch(() => {
+        // Fallback to saved local rankings
+        if (savedRankings) {
+          setLeaderboard(savedRankings.map((r, i) => ({ name: r.name, rank: i + 1, isYou: r.isYou })));
+        }
+      });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [room?.roomCode]);
 
   if (!state) {
     return (
-      <div className="max-w-2xl mx-auto px-4 py-16 text-center">
-        <h1 className="text-3xl font-black text-white mb-4">No Sandbox Result</h1>
-        <p className="text-arena-text-dim mb-6">Start a sandbox run first.</p>
-        <Link to="/sandbox/setup" className="text-arena-accent hover:underline font-semibold">Go to Sandbox Setup →</Link>
+      <div className="max-w-md mx-auto px-4 py-16 text-center">
+        <h1 className="text-2xl font-bold text-white mb-4">No Party Result</h1>
+        <Link to="/party" className="text-arena-accent hover:underline">Back to Party →</Link>
       </div>
     );
   }
@@ -39,7 +65,8 @@ export default function SandboxResultPage() {
   return (
     <div className="max-w-6xl mx-auto px-4 py-8">
       <div className="text-center mb-10">
-        <h1 className="text-3xl font-black text-white">Sandbox Result</h1>
+        <h1 className="text-3xl font-black text-white">Party Results</h1>
+        <p className="text-arena-text-dim mt-1">{room?.roomName ?? 'Party Game'}</p>
         <div className="flex items-center justify-center gap-2 mt-2">
           <span className="w-3 h-3 rounded-full" style={{ backgroundColor: arch.color }} />
           <span className="font-bold" style={{ color: arch.color }}>{arch.name}</span>
@@ -51,8 +78,38 @@ export default function SandboxResultPage() {
       </div>
 
       <div className="grid lg:grid-cols-3 gap-6">
-        {/* AI Grade */}
-        <div>
+        {/* Left: Leaderboard + AI Grade */}
+        <div className="space-y-6">
+          {/* Leaderboard */}
+          <div className="bg-arena-surface border border-arena-border rounded-xl p-6">
+            <h3 className="font-bold text-white mb-4">Leaderboard</h3>
+            {leaderboard.length === 0 ? (
+              <p className="text-arena-text-dim text-sm">Loading rankings…</p>
+            ) : (
+              <div className="space-y-2">
+                {leaderboard.map((p) => {
+                  const medal = p.rank === 1 ? '🥇' : p.rank === 2 ? '🥈' : p.rank === 3 ? '🥉' : `#${p.rank}`;
+                  return (
+                    <div
+                      key={p.name}
+                      className={`flex items-center justify-between rounded-lg px-4 py-3 ${
+                        p.isYou ? 'bg-arena-accent/10 border border-arena-accent/30' : 'bg-arena-bg'
+                      }`}
+                    >
+                      <div className="flex items-center gap-3">
+                        <span className="text-lg font-bold text-white">{medal}</span>
+                        <span className={`font-medium ${p.isYou ? 'text-arena-accent' : 'text-white'}`}>
+                          {p.name} {p.isYou && <span className="text-xs opacity-60">(you)</span>}
+                        </span>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+
+          {/* AI Grade */}
           <AIGradeCard
             archetype={state.archetype}
             totalReturnPct={totalReturn}
@@ -68,7 +125,7 @@ export default function SandboxResultPage() {
           />
         </div>
 
-        {/* Charts */}
+        {/* Right: Charts + History */}
         <div className="lg:col-span-2 space-y-6">
           {/* Growth Chart */}
           <div className="bg-arena-surface border border-arena-border rounded-xl p-6">
@@ -111,7 +168,7 @@ export default function SandboxResultPage() {
             </ResponsiveContainer>
           </div>
 
-          {/* Round History Table */}
+          {/* Decision History Table */}
           <div className="bg-arena-surface border border-arena-border rounded-xl p-6">
             <h3 className="text-sm font-semibold text-white mb-4">Decision History</h3>
             <div className="overflow-x-auto">
@@ -149,7 +206,7 @@ export default function SandboxResultPage() {
       </div>
 
       <div className="flex gap-4 mt-8 justify-center">
-        <Link to="/sandbox/setup" className="px-6 py-2.5 bg-arena-accent text-black font-bold rounded-lg hover:bg-arena-accent/90 transition-colors">
+        <Link to="/party" className="px-6 py-2.5 bg-arena-accent text-black font-bold rounded-lg hover:bg-arena-accent/90 transition-colors">
           Play Again
         </Link>
         <Link to="/dashboard" className="px-6 py-2.5 bg-arena-surface border border-arena-border rounded-lg text-white font-medium hover:bg-white/5 transition-colors">

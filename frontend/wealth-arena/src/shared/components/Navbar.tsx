@@ -7,7 +7,7 @@ const NAV_LINKS = [
   { to: '/daily', label: 'Daily Puzzle' },
   { to: '/sandbox/setup', label: 'Sandbox' },
   { to: '/markets', label: 'Markets' },
-  { to: '/classroom', label: 'Classroom' },
+  { to: '/party', label: 'Party' },
 ];
 
 export default function Navbar() {
@@ -35,10 +35,9 @@ export default function Navbar() {
   return (
     <nav className="bg-arena-surface border-b border-arena-border px-4 lg:px-8 h-14 flex items-center justify-between sticky top-0 z-50">
       <div className="flex items-center gap-6">
-        <Link to="/dashboard" className="text-lg font-bold text-white tracking-tight flex items-center gap-2">
-          <span className="text-xl">⚔️</span>
-          <span className="hidden sm:inline">Last Portfolio Standing</span>
-          <span className="sm:hidden">LPS</span>
+        <Link to="/dashboard" className="text-xl font-bold text-white tracking-tight flex items-center gap-3">
+          <img src="/logo.png" alt="Endgame Securities" className="h-12 w-auto" />
+          <span>Endgame Securities</span>
         </Link>
 
         <div className="hidden md:flex items-center gap-1">

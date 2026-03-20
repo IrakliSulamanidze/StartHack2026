@@ -6,7 +6,7 @@
 export type BackendGameMode = 'sandbox' | 'battle' | 'ranked' | 'event';
 export type BackendTimeMode = 'monthly' | 'quarterly' | 'yearly';
 export type BackendDifficulty = 'beginner' | 'intermediate' | 'advanced';
-export type BackendAssetClass = 'equities' | 'bonds' | 'fx' | 'gold' | 'crypto';
+export type BackendAssetClass = 'equities' | 'bonds' | 'fx' | 'gold';
 export type BackendEventSeverity = 'ordinary' | 'impactful' | 'major';
 
 export interface BackendAssetState {

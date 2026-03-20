@@ -5,43 +5,53 @@ import type { ArchetypeId, TimingPreset } from '@/shared/types/domain';
 import { useAuth } from '@/features/auth/AuthContext';
 import ArchetypeCard from '@/shared/components/ArchetypeCard';
 import { save } from '@/services/persistence';
+import { createRoom } from '@/services/partyApi';
 
-export default function ClassroomHostPage() {
+export default function PartyHostPage() {
   const { user } = useAuth();
   const navigate = useNavigate();
   const [roomName, setRoomName] = useState('');
   const [archetype, setArchetype] = useState<ArchetypeId>('balanced-core');
   const [timing, setTiming] = useState<TimingPreset>('standard');
+  const [creating, setCreating] = useState(false);
+  const [error, setError] = useState('');
 
-  function generateRoomCode(): string {
-    const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
-    let code = '';
-    for (let i = 0; i < 6; i++) {
-      code += chars[Math.floor(Math.random() * chars.length)];
+  async function handleCreate() {
+    setCreating(true);
+    setError('');
+    try {
+      const room = await createRoom(
+        roomName || `${user?.name}'s Room`,
+        archetype,
+        timing,
+      );
+      // Save to localStorage for the play page to pick up
+      save('party_room', {
+        roomCode: room.room_code,
+        roomName: room.room_name,
+        archetype: room.archetype,
+        objective: null,
+        timing: room.timing,
+        hostId: room.host_id,
+        players: room.players.map((p: { id: string; name: string; isHost: boolean }) => ({
+          id: p.id,
+          name: p.name,
+          isHost: p.isHost,
+        })),
+        started: false,
+      });
+      navigate('/party/lobby');
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to create room');
+    } finally {
+      setCreating(false);
     }
-    return code;
-  }
-
-  function handleCreate() {
-    const code = generateRoomCode();
-    const room = {
-      roomCode: code,
-      roomName: roomName || `${user?.name}'s Room`,
-      archetype,
-      objective: null,
-      timing,
-      hostId: user?.id ?? '',
-      players: [{ id: user?.id ?? '', name: user?.name ?? 'Host', isHost: true }],
-      started: false,
-    };
-    save('classroom_room', room);
-    navigate('/classroom/lobby');
   }
 
   return (
     <div className="max-w-4xl mx-auto px-4 py-8">
-      <h1 className="text-3xl font-black text-white mb-2">🎤 Host a Classroom Room</h1>
-      <p className="text-arena-text-dim mb-8">Configure the game settings. Students will play the same scenario.</p>
+      <h1 className="text-3xl font-black text-white mb-2">Host a Party Room</h1>
+      <p className="text-arena-text-dim mb-8">Configure the game settings. Players will play the same scenario.</p>
 
       {/* Room Name */}
       <div className="mb-8">
@@ -57,8 +67,8 @@ export default function ClassroomHostPage() {
 
       {/* Archetype */}
       <div className="mb-8">
-        <h2 className="text-lg font-bold text-white mb-1">Choose Archetype for All Players</h2>
-        <p className="text-sm text-arena-text-dim mb-4">Everyone plays with the same archetype.</p>
+        <h2 className="text-lg font-bold text-white mb-1">Choose Investor Profile for All Players</h2>
+        <p className="text-sm text-arena-text-dim mb-4">Everyone plays with the same profile.</p>
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
           {ARCHETYPES.map((a) => (
             <ArchetypeCard key={a.id} archetype={a} selected={archetype === a.id} compact onClick={() => setArchetype(a.id)} />
@@ -89,11 +99,14 @@ export default function ClassroomHostPage() {
         </div>
       </div>
 
+      {error && <p className="text-sm text-arena-danger mb-4">{error}</p>}
+
       <button
         onClick={handleCreate}
-        className="w-full bg-arena-accent text-black font-bold py-3 rounded-xl text-lg hover:bg-arena-accent/90 transition-colors"
+        disabled={creating}
+        className="w-full bg-arena-accent text-black font-bold py-3 rounded-xl text-lg hover:bg-arena-accent/90 transition-colors disabled:opacity-50"
       >
-        Create Room →
+        {creating ? 'Creating…' : 'Create Room →'}
       </button>
     </div>
   );

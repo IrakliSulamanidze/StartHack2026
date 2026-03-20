@@ -19,7 +19,7 @@ export default function ArchetypeCard({ archetype, selected, compact, onClick }:
       style={{ borderColor: selected ? archetype.color : undefined, color: archetype.color }}
     >
       <div className="flex items-center gap-3 mb-2">
-        <span className="text-2xl">{archetype.icon}</span>
+        <span className="w-3 h-3 rounded-full shrink-0" style={{ backgroundColor: archetype.color }} />
         <div>
           <h3 className="font-bold text-white text-base">{archetype.name}</h3>
           <p className="text-xs text-arena-text-dim">{archetype.tagline}</p>

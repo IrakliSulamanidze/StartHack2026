@@ -12,12 +12,12 @@ import DailyResultPage from '@/features/daily/DailyResultPage';
 import SandboxSetupPage from '@/features/sandbox/SandboxSetupPage';
 import SandboxPlayPage from '@/features/sandbox/SandboxPlayPage';
 import SandboxResultPage from '@/features/sandbox/SandboxResultPage';
-import ClassroomPage from '@/features/classroom/ClassroomPage';
-import ClassroomHostPage from '@/features/classroom/ClassroomHostPage';
-import ClassroomJoinPage from '@/features/classroom/ClassroomJoinPage';
-import ClassroomLobbyPage from '@/features/classroom/ClassroomLobbyPage';
-import ClassroomPlayPage from '@/features/classroom/ClassroomPlayPage';
-import ClassroomResultPage from '@/features/classroom/ClassroomResultPage';
+import PartyPage from '@/features/party/PartyPage';
+import PartyHostPage from '@/features/party/PartyHostPage';
+import PartyJoinPage from '@/features/party/PartyJoinPage';
+import PartyLobbyPage from '@/features/party/PartyLobbyPage';
+import PartyPlayPage from '@/features/party/PartyPlayPage';
+import PartyResultPage from '@/features/party/PartyResultPage';
 import ProfilePage from '@/features/profile/ProfilePage';
 import MarketsPage from '@/features/markets/MarketsPage';
 import AssetDetailPage from '@/features/markets/AssetDetailPage';
@@ -41,12 +41,12 @@ export default function App() {
           <Route path="/sandbox/setup" element={<SandboxSetupPage />} />
           <Route path="/sandbox/play" element={<SandboxPlayPage />} />
           <Route path="/sandbox/result" element={<SandboxResultPage />} />
-          <Route path="/classroom" element={<ClassroomPage />} />
-          <Route path="/classroom/host" element={<ClassroomHostPage />} />
-          <Route path="/classroom/join" element={<ClassroomJoinPage />} />
-          <Route path="/classroom/lobby" element={<ClassroomLobbyPage />} />
-          <Route path="/classroom/play" element={<ClassroomPlayPage />} />
-          <Route path="/classroom/result" element={<ClassroomResultPage />} />
+          <Route path="/party" element={<PartyPage />} />
+          <Route path="/party/host" element={<PartyHostPage />} />
+          <Route path="/party/join" element={<PartyJoinPage />} />
+          <Route path="/party/lobby" element={<PartyLobbyPage />} />
+          <Route path="/party/play" element={<PartyPlayPage />} />
+          <Route path="/party/result" element={<PartyResultPage />} />
           <Route path="/profile" element={<ProfilePage />} />
           <Route path="/markets" element={<MarketsPage />} />
           <Route path="/markets/:assetId" element={<AssetDetailPage />} />

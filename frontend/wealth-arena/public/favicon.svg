@@ -1,3 +1,12 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
-  <text y=".9em" font-size="90">⚔️</text>
+  <!-- Shield shape -->
+  <path d="M50 5 L90 20 L90 55 Q90 80 50 95 Q10 80 10 55 L10 20 Z" fill="#2c3e6b" stroke="#3a5199" stroke-width="2"/>
+  <!-- Bar chart bars -->
+  <rect x="22" y="55" width="10" height="20" rx="1" fill="#4a90d9"/>
+  <rect x="36" y="42" width="10" height="33" rx="1" fill="#5ba3e6"/>
+  <rect x="50" y="30" width="10" height="45" rx="1" fill="#6db8f2"/>
+  <rect x="64" y="22" width="10" height="53" rx="1" fill="#7ecbff"/>
+  <!-- Arrow -->
+  <path d="M22 58 Q45 25 78 15" stroke="#e8b84b" stroke-width="4" fill="none" stroke-linecap="round"/>
+  <polygon points="78,8 84,18 74,18" fill="#e8b84b"/>
 </svg>

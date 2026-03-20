@@ -19,14 +19,14 @@ export default function SandboxSetupPage() {
   return (
     <div className="max-w-5xl mx-auto px-4 py-8">
       <div className="text-center mb-10">
-        <h1 className="text-3xl font-black text-white">🏗️ Sandbox Setup</h1>
-        <p className="text-arena-text-dim mt-2">Customize your game. Pick archetype and AI mode.</p>
+        <h1 className="text-3xl font-black text-white">Sandbox Setup</h1>
+        <p className="text-arena-text-dim mt-2">Customize your game. Pick your investor profile and AI mode.</p>
       </div>
 
       {/* Step 1: Archetype */}
       <section className="mb-10">
-        <h2 className="text-lg font-bold text-white mb-1">1. Choose Your Archetype</h2>
-        <p className="text-sm text-arena-text-dim mb-4">Your archetype determines your starting allocation and play style.</p>
+        <h2 className="text-lg font-bold text-white mb-1">1. Choose Your Investor Profile</h2>
+        <p className="text-sm text-arena-text-dim mb-4">Your profile determines your starting allocation and risk level.</p>
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {ARCHETYPES.map((a) => (
             <ArchetypeCard key={a.id} archetype={a} selected={archetype === a.id} onClick={() => setArchetype(a.id)} />
